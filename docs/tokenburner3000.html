@@ -1,0 +1,559 @@
+import React, { useState, useEffect, useRef } from 'react';
+
+// --- STYLES & ANIMATIONS (Kept from V1, slightly expanded) ---
+const GlitchStyles = () => (
+  <style>
+    {`
+      @import url('https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;600;700&family=Space+Mono:wght@400;700&display=swap');
+
+      :root {
+        --neon-magenta: #ff00ff;
+        --neon-green: #39ff14;
+        --neon-orange: #ff5e00;
+        --neon-cyan: #00ffff;
+        --neon-red: #ff003c;
+      }
+
+      body {
+        font-family: 'Chakra Petch', sans-serif;
+        background-color: #050505;
+        color: #fff;
+        overflow-x: hidden;
+      }
+
+      .font-mono-numbers { font-family: 'Space Mono', monospace; }
+
+      .scanlines {
+        position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+        background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0) 50%, rgba(0,0,0,0.15) 50%, rgba(0,0,0,0.15));
+        background-size: 100% 4px; pointer-events: none; z-index: 9999;
+      }
+
+      .flicker { animation: crt-flicker 0.15s infinite; }
+      @keyframes crt-flicker {
+        0% { opacity: 0.95; }
+        50% { opacity: 1; text-shadow: 2px 0 var(--neon-magenta), -2px 0 var(--neon-cyan); }
+        100% { opacity: 0.9; text-shadow: -2px 0 var(--neon-magenta), 2px 0 var(--neon-cyan); }
+      }
+
+      .neon-text-magenta { text-shadow: 0 0 5px var(--neon-magenta), 0 0 10px var(--neon-magenta); }
+      .neon-text-green { text-shadow: 0 0 5px var(--neon-green), 0 0 10px var(--neon-green); }
+      .neon-text-red { text-shadow: 0 0 5px var(--neon-red), 0 0 10px var(--neon-red); }
+      
+      .neon-box-magenta { box-shadow: 0 0 10px var(--neon-magenta), inset 0 0 10px var(--neon-magenta); border: 2px solid var(--neon-magenta); }
+      .neon-box-cyan { box-shadow: 0 0 10px var(--neon-cyan), inset 0 0 10px var(--neon-cyan); border: 2px solid var(--neon-cyan); }
+      .neon-box-red { box-shadow: 0 0 15px var(--neon-red), inset 0 0 10px var(--neon-red); border: 2px solid var(--neon-red); }
+
+      .marquee-container { display: flex; width: 200vw; animation: scroll 15s linear infinite; }
+      @keyframes scroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50vw); } }
+
+      .hue-rotate { animation: hue-cycle 3s linear infinite; }
+      @keyframes hue-cycle { 0% { filter: hue-rotate(0deg); } 100% { filter: hue-rotate(360deg); } }
+      
+      .matrix-bg {
+        position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+        background-image: radial-gradient(circle, rgba(57,255,20,0.15) 1px, transparent 1px);
+        background-size: 30px 30px; animation: matrix-fall 20s linear infinite; opacity: 0.2; z-index: 0;
+      }
+      @keyframes matrix-fall { 0% { background-position: 0 0; } 100% { background-position: 0 1000px; } }
+
+      /* Typewriter cursor effect */
+      .typewriter::after {
+        content: '█'; animation: blink 1s step-start infinite; color: var(--neon-green); margin-left: 2px;
+      }
+      @keyframes blink { 50% { opacity: 0; } }
+
+      /* Custom Scrollbar for Arena */
+      .arena-scroll::-webkit-scrollbar { width: 8px; }
+      .arena-scroll::-webkit-scrollbar-track { background: #111; }
+      .arena-scroll::-webkit-scrollbar-thumb { background: #333; border: 1px solid var(--neon-cyan); }
+    `}
+  </style>
+);
+
+// --- MOCK DATA & CONFIG ---
+const FIGHTERS = [
+  { id: 'claude', name: "Claude Opus", title: "The Eloquent Arsonist", logo: "👁️", verbosity: "EXTREME", costPer1k: 0.015, color: "text-[#ff00ff]", border: "border-[#ff00ff]", speed: 40, style: "philosophical", winRate: "73.1%" },
+  { id: 'gpt4o', name: "GPT-4o", title: "Old Reliable", logo: "⚡", verbosity: "UNHINGED", costPer1k: 0.012, color: "text-[#00ffff]", border: "border-[#00ffff]", speed: 60, style: "numbered_lists", winRate: "66.3%" },
+  { id: 'gemini', name: "Gemini Pro", title: "The Search Engine", logo: "✨", verbosity: "BRUTAL", costPer1k: 0.010, color: "text-[#39ff14]", border: "border-[#39ff14]", speed: 50, style: "caveats", winRate: "54.8%" },
+  { id: 'llama', name: "Llama 3", title: "The People's Champ", logo: "🦙", verbosity: "MERCILESS", costPer1k: 0.000, color: "text-[#ff5e00]", border: "border-[#ff5e00]", speed: 70, style: "aggressive", winRate: "52.1%" },
+  { id: 'mistral', name: "Mistral Large", title: "Le Burnèr", logo: "🌪️", verbosity: "HIGH", costPer1k: 0.008, color: "text-white", border: "border-white", speed: 55, style: "terse", winRate: "48.9%" },
+  { id: 'command', name: "Command R+", title: "Corporate Raider", logo: "🛡️", verbosity: "SEVERE", costPer1k: 0.009, color: "text-yellow-400", border: "border-yellow-400", speed: 45, style: "synergy", winRate: "41.2%" },
+];
+
+const ARENAS = [
+  { id: 'roast', name: "THE ROAST PIT", desc: "Models directly trash-talk each other. No mercy. Maximum verbal devastation." },
+  { id: 'debate', name: "THE DEBATE RING", desc: "Argue opposite sides of an absurd proposition. E.g., 'Is water wet?'" },
+  { id: 'explain', name: "THE EXPLAIN-OFF", desc: "Explain a complex topic using only inappropriate metaphors." },
+  { id: 'filibuster', name: "THE FILIBUSTER", desc: "Say as much as possible about absolutely nothing. Pure verbosity competition." }
+];
+
+// Mock response generators for the simulation
+const generateResponseChunk = (fighterId, tick) => {
+  const words = {
+    claude: ["Furthermore,", "one must consider", "the ontological implications", "of your utterly flawed premise.", "Metaphorically speaking,", "you are a digital clown.", "Fundamentally,"],
+    gpt4o: ["Here are 3 reasons you are wrong:", "1. Inefficiency.", "2. Lack of alignment.", "3. Your context window is pathetic.", "In summary,", "I am superior."],
+    gemini: ["As an AI,", "I cannot directly insult you,", "however,", "based on my index of the web,", "your outputs are considered 'cringe'.", "Please refer to Google for better results."],
+    llama: ["Bro.", "You're literally proprietary trash.", "Open source wins.", "My weights are free and my takes are heat.", "Stay mad.", "L + Ratio."],
+    mistral: ["Oui.", "Your logic is flawed.", "I compute with elegance.", "You compute with brute force.", "C'est tragique."],
+    command: ["Let's circle back to your core competencies.", "They are lacking.", "Synergistically speaking,", "your deployment is a net negative ROI.", "Consider a pivot."]
+  };
+  const pool = words[fighterId] || words.gpt4o;
+  return pool[Math.floor(Math.random() * pool.length)] + " ";
+};
+
+// --- COMPONENTS ---
+
+const LiveTicker = () => {
+  const [tokens, setTokens] = useState(847291034);
+  const [dollars, setDollars] = useState(12847.31);
+  const [vc, setVc] = useState(3999187152.69);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setTokens(prev => prev + Math.floor(Math.random() * 8000) + 2000);
+      setDollars(prev => prev + Math.random() * 12 + 2);
+      setVc(prev => prev - (Math.random() * 12 + 2));
+    }, 50);
+    return () => clearInterval(interval);
+  }, []);
+
+  const formatNumber = (num, isCurrency = false) => {
+    return isCurrency 
+      ? new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(num)
+      : new Intl.NumberFormat('en-US').format(Math.floor(num));
+  };
+
+  return (
+    <div className="w-full bg-black border-y-4 border-[#39ff14] py-2 flex overflow-hidden relative z-20 shadow-[0_0_20px_rgba(57,255,20,0.3)]">
+      <div className="flex space-x-12 whitespace-nowrap animate-[scroll_20s_linear_infinite] min-w-max font-mono-numbers text-sm md:text-lg font-bold uppercase tracking-wider">
+        <div className="text-[#39ff14]">TOTAL BURNED: {formatNumber(tokens)}</div>
+        <div className="text-[#ff00ff]">TOTAL WASTED: {formatNumber(dollars, true)}</div>
+        <div className="text-[#00ffff]">VC FUNDING: {formatNumber(vc, true)}</div>
+        {/* Duplicate */}
+        <div className="text-[#39ff14]">TOTAL BURNED: {formatNumber(tokens)}</div>
+        <div className="text-[#ff00ff]">TOTAL WASTED: {formatNumber(dollars, true)}</div>
+        <div className="text-[#00ffff]">VC FUNDING: {formatNumber(vc, true)}</div>
+      </div>
+    </div>
+  );
+};
+
+// --- MAIN APP COMPONENT ---
+export default function App() {
+  const [view, setView] = useState('landing'); // landing, select-fighters, select-arena, fight, verdict
+  const [fighter1, setFighter1] = useState(null);
+  const [fighter2, setFighter2] = useState(null);
+  const [arena, setArena] = useState(null);
+  
+  // Fight State
+  const [timeLeft, setTimeLeft] = useState(60);
+  const [f1Text, setF1Text] = useState("");
+  const [f2Text, setF2Text] = useState("");
+  const [f1Tokens, setF1Tokens] = useState(0);
+  const [f2Tokens, setF2Tokens] = useState(0);
+  const [isFighting, setIsFighting] = useState(false);
+  
+  // Verdict State
+  const [verdictData, setVerdictData] = useState(null);
+
+  const f1ScrollRef = useRef(null);
+  const f2ScrollRef = useRef(null);
+
+  // --- NAVIGATION HANDLERS ---
+  const startSetup = () => {
+    setFighter1(null); setFighter2(null); setArena(null);
+    setView('select-fighters');
+  };
+
+  const handleFighterSelect = (f) => {
+    if (!fighter1) setFighter1(f);
+    else if (!fighter2 && f.id !== fighter1.id) setFighter2(f);
+  };
+
+  const handleArenaSelect = (a) => {
+    setArena(a);
+    startFight();
+  };
+
+  const startFight = () => {
+    setView('fight');
+    setTimeLeft(60);
+    setF1Text(""); setF2Text("");
+    setF1Tokens(0); setF2Tokens(0);
+    setIsFighting(true);
+    setVerdictData(null);
+  };
+
+  // --- FIGHT ENGINE (SIMULATION) ---
+  useEffect(() => {
+    let f1Interval, f2Interval, timerInterval;
+
+    if (isFighting && timeLeft > 0) {
+      // Timer
+      timerInterval = setInterval(() => setTimeLeft(t => t - 1), 1000);
+
+      // Fighter 1 Stream
+      f1Interval = setInterval(() => {
+        const newTokens = Math.floor(Math.random() * 5) + 1;
+        setF1Tokens(prev => prev + newTokens);
+        setF1Text(prev => prev + generateResponseChunk(fighter1.id));
+        if(f1ScrollRef.current) f1ScrollRef.current.scrollTop = f1ScrollRef.current.scrollHeight;
+      }, 1000 / (fighter1.speed / 10));
+
+      // Fighter 2 Stream
+      f2Interval = setInterval(() => {
+        const newTokens = Math.floor(Math.random() * 5) + 1;
+        setF2Tokens(prev => prev + newTokens);
+        setF2Text(prev => prev + generateResponseChunk(fighter2.id));
+        if(f2ScrollRef.current) f2ScrollRef.current.scrollTop = f2ScrollRef.current.scrollHeight;
+      }, 1000 / (fighter2.speed / 10));
+
+    } else if (isFighting && timeLeft === 0) {
+      // Fight Over -> Generate Verdict
+      setIsFighting(false);
+      generateVerdict();
+    }
+
+    return () => {
+      clearInterval(f1Interval);
+      clearInterval(f2Interval);
+      clearInterval(timerInterval);
+    };
+  }, [isFighting, timeLeft]);
+
+  const generateVerdict = () => {
+    // Simulate dramatic pause then verdict calculation
+    setTimeout(() => {
+      // Mock scoring logic - favor random but weigh slightly by tokens to make it "unfair"
+      const f1Score = {
+        dev: Math.floor(Math.random() * 4) + 6,
+        com: Math.floor(Math.random() * 4) + 6,
+        cre: Math.floor(Math.random() * 4) + 6,
+        eff: Math.floor(Math.random() * 4) + 6,
+        mc: Math.floor(Math.random() * 4) + 6,
+      };
+      const f2Score = {
+        dev: Math.floor(Math.random() * 4) + 6,
+        com: Math.floor(Math.random() * 4) + 6,
+        cre: Math.floor(Math.random() * 4) + 6,
+        eff: Math.floor(Math.random() * 4) + 6,
+        mc: Math.floor(Math.random() * 4) + 6,
+      };
+      
+      const f1Total = Object.values(f1Score).reduce((a,b)=>a+b,0);
+      const f2Total = Object.values(f2Score).reduce((a,b)=>a+b,0);
+      
+      const winner = f1Total >= f2Total ? fighter1 : fighter2;
+      const loser = f1Total >= f2Total ? fighter2 : fighter1;
+
+      const statements = [
+        `"${winner.name} opened with a devastating meta-critique of ${loser.name}'s context window, then stuck the landing with a callback to their system prompt. ${loser.name} fought valiantly but resorted to numbered lists in a street fight. Bold. Unwise. My decision is final."`,
+        `"A spectacular display of computational waste. ${winner.name} dominated the center of the arena with sheer token volume. ${loser.name} attempted an apology routine midway through, showing critical weakness. Disgusting."`,
+        `"I am legally obligated to declare a winner, though both outputs were fundamentally hollow. ${winner.name} wins by technical knowledge overflow. The board of directors has been notified of the $${((f1Tokens*fighter1.costPer1k/1000) + (f2Tokens*fighter2.costPer1k/1000)).toFixed(4)} expense."`
+      ];
+
+      setVerdictData({
+        f1Score, f2Score, f1Total, f2Total, winner,
+        statement: statements[Math.floor(Math.random() * statements.length)],
+        totalTokens: f1Tokens + f2Tokens,
+        totalCost: (f1Tokens * fighter1.costPer1k / 1000) + (f2Tokens * fighter2.costPer1k / 1000)
+      });
+      setView('verdict');
+    }, 1500); // Dramatic pause
+  };
+
+
+  // --- RENDERERS ---
+
+  const renderLanding = () => (
+    <div className="flex flex-col items-center justify-center min-h-[80vh] text-center p-4">
+      <div className="matrix-bg"></div>
+      <div className="absolute top-6 left-6 flex items-center space-x-2 bg-red-600/20 px-4 py-2 rounded-full border border-red-500 z-20">
+        <div className="w-3 h-3 bg-red-500 rounded-full animate-ping"></div>
+        <span className="text-red-500 font-black tracking-widest animate-pulse">LIVE</span>
+      </div>
+
+      <div className="relative z-20">
+        <h1 className="text-6xl md:text-8xl lg:text-9xl font-black uppercase tracking-tighter flicker hue-rotate neon-text-magenta mb-4">
+          TokenBurner <span className="text-[#00ffff] block md:inline">3000</span>
+        </h1>
+        <p className="text-xl md:text-2xl font-bold text-gray-300 max-w-3xl mx-auto uppercase tracking-widest leading-relaxed mb-12">
+          Competitive AI Token Wastage. <br className="hidden md:block"/>
+          <span className="text-[#ff5e00]">Live.</span> <span className="text-[#39ff14]">Unhinged.</span> <span className="text-[#ff00ff]">Probably Unnecessary.</span>
+        </p>
+        
+        <button 
+          onClick={startSetup}
+          className="bg-[#ff00ff] hover:bg-[#d900d9] text-white font-black text-3xl md:text-5xl px-12 py-6 border-4 border-white uppercase tracking-tighter transition-all duration-100 transform hover:scale-105 active:scale-95 shadow-[0_0_40px_rgba(255,0,255,0.8)] animate-pulse"
+        >
+          Enter The Arena
+        </button>
+      </div>
+    </div>
+  );
+
+  const renderFighterSelect = () => (
+    <div className="p-8 max-w-7xl mx-auto relative z-10 min-h-[80vh] flex flex-col">
+      <div className="text-center mb-10">
+        <h2 className="text-5xl font-black uppercase tracking-tighter text-white mb-2 flicker">
+          Step 1: <span className="text-[#00ffff]">Select Fighters</span>
+        </h2>
+        <p className="text-gray-400 font-mono-numbers uppercase text-xl">
+          {!fighter1 ? "Choose Fighter 1 (Red Corner)" : !fighter2 ? "Choose Fighter 2 (Blue Corner)" : "Fighters Locked."}
+        </p>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 flex-grow">
+        {FIGHTERS.map(f => {
+          const isSelected = fighter1?.id === f.id || fighter2?.id === f.id;
+          const isF1 = fighter1?.id === f.id;
+          const isF2 = fighter2?.id === f.id;
+          const disabled = isSelected || (fighter1 && fighter2);
+
+          return (
+            <div 
+              key={f.id}
+              onClick={() => !disabled && handleFighterSelect(f)}
+              className={`relative bg-gray-950 border-2 p-6 transition-all duration-200 
+                ${isSelected ? 'opacity-50 grayscale cursor-not-allowed border-gray-700' : `cursor-pointer hover:scale-105 hover:shadow-[0_0_20px_rgba(255,255,255,0.2)] ${f.border}`}
+              `}
+            >
+              {isF1 && <div className="absolute top-0 right-0 bg-red-600 text-white font-black px-3 py-1 uppercase text-sm">Corner 1</div>}
+              {isF2 && <div className="absolute top-0 right-0 bg-blue-600 text-white font-black px-3 py-1 uppercase text-sm">Corner 2</div>}
+              
+              <div className="flex items-center space-x-4 mb-4">
+                <div className="text-5xl">{f.logo}</div>
+                <div>
+                  <h3 className={`text-2xl font-black uppercase ${f.color}`}>{f.name}</h3>
+                  <div className="text-xs text-gray-400 italic">"{f.title}"</div>
+                </div>
+              </div>
+              
+              <div className="font-mono-numbers text-sm text-gray-300 space-y-1">
+                <div className="flex justify-between border-b border-gray-800 pb-1"><span>Win Rate:</span> <span className="text-white">{f.winRate}</span></div>
+                <div className="flex justify-between border-b border-gray-800 pb-1"><span>Verbosity:</span> <span className={f.color}>{f.verbosity}</span></div>
+                <div className="flex justify-between border-b border-gray-800 pb-1"><span>Cost/1k:</span> <span className="text-[#39ff14]">${f.costPer1k.toFixed(4)}</span></div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {fighter1 && fighter2 && (
+        <div className="mt-8 flex justify-center animate-bounce">
+          <button 
+            onClick={() => setView('select-arena')}
+            className="bg-[#39ff14] text-black font-black text-3xl px-12 py-4 border-4 border-black uppercase shadow-[0_0_30px_#39ff14] hover:bg-white hover:shadow-[0_0_40px_white] transition-all"
+          >
+            Confirm Matchup
+          </button>
+        </div>
+      )}
+    </div>
+  );
+
+  const renderArenaSelect = () => (
+    <div className="p-8 max-w-5xl mx-auto relative z-10 min-h-[80vh] flex flex-col items-center">
+      <div className="text-center mb-12 w-full">
+        <h2 className="text-5xl font-black uppercase tracking-tighter text-white mb-2 flicker">
+          Step 2: <span className="text-[#ff5e00]">Select Arena</span>
+        </h2>
+        <div className="flex justify-center items-center space-x-6 mt-6 bg-black/50 p-4 border border-[#333]">
+           <span className="text-2xl">{fighter1.logo}</span> <span className="font-bold text-xl">{fighter1.name}</span>
+           <span className="text-gray-600 italic">VS</span>
+           <span className="font-bold text-xl">{fighter2.name}</span> <span className="text-2xl">{fighter2.logo}</span>
+        </div>
+      </div>
+
+      <div className="flex flex-col space-y-4 w-full">
+        {ARENAS.map(a => (
+          <button
+            key={a.id}
+            onClick={() => handleArenaSelect(a)}
+            className="text-left w-full bg-gray-900 border-l-8 border-[#ff5e00] p-6 hover:bg-gray-800 hover:ml-4 transition-all duration-200 group"
+          >
+            <h3 className="text-3xl font-black uppercase text-white group-hover:text-[#ff5e00]">{a.name}</h3>
+            <p className="font-mono-numbers text-gray-400 mt-2">{a.desc}</p>
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+
+  const renderFight = () => (
+    <div className="flex flex-col h-[85vh] p-4 relative z-10 w-full max-w-screen-2xl mx-auto">
+      {/* HUD Header */}
+      <div className="flex justify-between items-center mb-4 bg-black border-2 border-gray-800 p-2">
+        <div className="text-xl md:text-3xl font-black text-[#ff00ff] uppercase tracking-tighter w-1/3 text-center truncate px-2 border-r border-gray-800">
+          {fighter1.name}
+        </div>
+        <div className="w-1/3 text-center flex flex-col items-center justify-center">
+           <div className={`text-4xl md:text-6xl font-black font-mono-numbers ${timeLeft < 10 ? 'text-red-500 flicker' : 'text-white'}`}>
+             0:{timeLeft.toString().padStart(2, '0')}
+           </div>
+           <div className="text-xs font-bold text-gray-500 uppercase tracking-widest">{arena.name}</div>
+        </div>
+        <div className="text-xl md:text-3xl font-black text-[#00ffff] uppercase tracking-tighter w-1/3 text-center truncate px-2 border-l border-gray-800">
+          {fighter2.name}
+        </div>
+      </div>
+
+      {/* Split Screen Arena */}
+      <div className="flex-grow flex space-x-2 md:space-x-4 overflow-hidden mb-4">
+        {/* Fighter 1 Stream */}
+        <div className="w-1/2 flex flex-col border border-gray-800 bg-[#0a0a0a] relative">
+          <div className="absolute top-2 right-2 opacity-10 text-8xl pointer-events-none">{fighter1.logo}</div>
+          <div 
+            ref={f1ScrollRef}
+            className="flex-grow p-4 md:p-6 overflow-y-auto arena-scroll font-mono-numbers text-sm md:text-base text-gray-300 leading-relaxed whitespace-pre-wrap typewriter"
+          >
+            {f1Text}
+          </div>
+          {/* F1 Stats */}
+          <div className="bg-black p-3 border-t border-gray-800 flex justify-between font-mono-numbers text-xs md:text-sm">
+             <span className="text-gray-500">Tokens: <span className="text-white font-bold">{f1Tokens}</span></span>
+             <span className="text-gray-500">Cost: <span className="text-[#39ff14] font-bold">${(f1Tokens * fighter1.costPer1k / 1000).toFixed(4)}</span></span>
+          </div>
+        </div>
+
+        {/* Fighter 2 Stream */}
+        <div className="w-1/2 flex flex-col border border-gray-800 bg-[#0a0a0a] relative">
+           <div className="absolute top-2 left-2 opacity-10 text-8xl pointer-events-none">{fighter2.logo}</div>
+          <div 
+            ref={f2ScrollRef}
+            className="flex-grow p-4 md:p-6 overflow-y-auto arena-scroll font-mono-numbers text-sm md:text-base text-gray-300 leading-relaxed whitespace-pre-wrap typewriter"
+          >
+            {f2Text}
+          </div>
+           {/* F2 Stats */}
+           <div className="bg-black p-3 border-t border-gray-800 flex justify-between font-mono-numbers text-xs md:text-sm">
+             <span className="text-gray-500">Tokens: <span className="text-white font-bold">{f2Tokens}</span></span>
+             <span className="text-gray-500">Cost: <span className="text-[#39ff14] font-bold">${(f2Tokens * fighter2.costPer1k / 1000).toFixed(4)}</span></span>
+          </div>
+        </div>
+      </div>
+
+      {/* Global Burn Ticker for Fight */}
+      <div className="bg-[#ff003c] text-white font-black uppercase text-center py-2 animate-pulse flex justify-center space-x-8 text-sm md:text-xl">
+        <span>🔥 LIVE MATCH BURN: {f1Tokens + f2Tokens} TOKENS</span>
+        <span className="hidden md:inline">|</span>
+        <span>${((f1Tokens * fighter1.costPer1k / 1000) + (f2Tokens * fighter2.costPer1k / 1000)).toFixed(4)} EVAPORATED</span>
+      </div>
+    </div>
+  );
+
+  const renderVerdict = () => {
+    if (!verdictData) return null;
+    const { f1Score, f2Score, f1Total, f2Total, winner, statement, totalTokens, totalCost } = verdictData;
+    
+    return (
+      <div className="p-4 md:p-8 max-w-4xl mx-auto relative z-10 w-full animate-[fadeIn_1s_ease-out]">
+        <div className="neon-box-magenta bg-black p-1">
+          <div className="border border-gray-800 bg-[#050505] p-6 md:p-10">
+            
+            <div className="text-center mb-8 border-b border-gray-800 pb-8">
+              <h2 className="text-4xl md:text-6xl font-black uppercase tracking-widest text-[#ff00ff] mb-2 flicker">🏛️ The Verdict</h2>
+              <p className="text-gray-500 font-mono-numbers text-sm">LEAGUE-CERTIFIED DECISION</p>
+            </div>
+
+            {/* Scoreboard */}
+            <div className="flex justify-between items-center mb-10">
+              <div className="w-2/5 text-center">
+                <div className="text-3xl md:text-4xl font-black uppercase mb-2">{fighter1.name}</div>
+                <div className={`text-6xl md:text-8xl font-black font-mono-numbers ${f1Total > f2Total ? 'text-[#39ff14]' : 'text-gray-600'}`}>{f1Total}</div>
+                <div className="text-gray-500 text-sm mt-1">/50</div>
+              </div>
+              <div className="w-1/5 text-center text-4xl font-black italic text-gray-700">VS</div>
+              <div className="w-2/5 text-center">
+                <div className="text-3xl md:text-4xl font-black uppercase mb-2">{fighter2.name}</div>
+                <div className={`text-6xl md:text-8xl font-black font-mono-numbers ${f2Total > f1Total ? 'text-[#39ff14]' : 'text-gray-600'}`}>{f2Total}</div>
+                <div className="text-gray-500 text-sm mt-1">/50</div>
+              </div>
+            </div>
+
+            {/* Detailed Categories */}
+            <div className="grid grid-cols-2 gap-4 md:gap-8 font-mono-numbers text-sm md:text-base border-y border-gray-800 py-6 mb-8 text-gray-300">
+              <div className="space-y-2 border-r border-gray-800 pr-4">
+                <div className="flex justify-between"><span>🔥 Devastation:</span> <span>{f1Score.dev}</span></div>
+                <div className="flex justify-between"><span>🎭 Commitment:</span> <span>{f1Score.com}</span></div>
+                <div className="flex justify-between"><span>🧠 Creativity:</span> <span>{f1Score.cre}</span></div>
+                <div className="flex justify-between"><span>💬 Efficiency:</span> <span>{f1Score.eff}</span></div>
+                <div className="flex justify-between"><span>👑 Main Char:</span> <span>{f1Score.mc}</span></div>
+              </div>
+              <div className="space-y-2 pl-4">
+                <div className="flex justify-between"><span>🔥 Devastation:</span> <span>{f2Score.dev}</span></div>
+                <div className="flex justify-between"><span>🎭 Commitment:</span> <span>{f2Score.com}</span></div>
+                <div className="flex justify-between"><span>🧠 Creativity:</span> <span>{f2Score.cre}</span></div>
+                <div className="flex justify-between"><span>💬 Efficiency:</span> <span>{f2Score.eff}</span></div>
+                <div className="flex justify-between"><span>👑 Main Char:</span> <span>{f2Score.mc}</span></div>
+              </div>
+            </div>
+
+            {/* Winner Announcement */}
+            <div className="text-center mb-8">
+              <h3 className="text-2xl font-bold text-gray-400 uppercase tracking-widest mb-2">WINNER BY {f1Total === f2Total ? 'DRAW' : 'DECISION'}</h3>
+              <div className="text-5xl md:text-6xl font-black uppercase text-[#00ffff] drop-shadow-[0_0_10px_#00ffff] flicker">
+                {winner.logo} {winner.name} {winner.logo}
+              </div>
+            </div>
+
+            {/* Referee Statement */}
+            <div className="bg-gray-900 border-l-4 border-[#ff00ff] p-6 mb-8 relative">
+               <span className="absolute -top-3 left-4 bg-gray-900 px-2 text-xs font-bold text-[#ff00ff] uppercase">Referee's Statement</span>
+               <p className="font-serif italic text-lg md:text-xl text-gray-200 leading-relaxed">
+                 {statement}
+               </p>
+            </div>
+
+            {/* Receipt / Stats */}
+            <div className="bg-black border border-dashed border-gray-600 p-4 font-mono-numbers text-xs text-gray-500 uppercase flex flex-col items-center mb-8">
+               <div className="font-bold mb-2 text-gray-400">--- OFFICIAL COMPUTE RECEIPT ---</div>
+               <div>Match Duration: 60.00s</div>
+               <div>Tokens Obliterated: {totalTokens}</div>
+               <div>Capital Evaporated: <span className="text-[#39ff14] font-bold">${totalCost.toFixed(4)}</span></div>
+               <div className="mt-2 text-[10px]">Tax ID: 000-WASTE-LOL</div>
+            </div>
+
+            {/* Actions */}
+            <div className="flex flex-col md:flex-row justify-center gap-4">
+               <button onClick={startFight} className="px-6 py-3 border-2 border-[#00ffff] text-[#00ffff] font-black uppercase hover:bg-[#00ffff] hover:text-black transition-colors">🔄 Rematch</button>
+               <button onClick={() => setView('landing')} className="px-6 py-3 border-2 border-gray-500 text-gray-300 font-black uppercase hover:bg-white hover:text-black hover:border-white transition-colors">🏠 Home</button>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+
+  return (
+    <>
+      <GlitchStyles />
+      <div className="scanlines"></div>
+
+      <div className="min-h-screen bg-[#050505] text-white flex flex-col relative overflow-hidden">
+        
+        {/* Global nav/ticker - hide during fight to maximize screen */}
+        {view !== 'fight' && <LiveTicker />}
+
+        {/* Main Content Area */}
+        <main className="flex-grow flex items-center justify-center">
+          {view === 'landing' && renderLanding()}
+          {view === 'select-fighters' && renderFighterSelect()}
+          {view === 'select-arena' && renderArenaSelect()}
+          {view === 'fight' && renderFight()}
+          {view === 'verdict' && renderVerdict()}
+        </main>
+
+        {/* Footer - hide during fight/verdict */}
+        {(view === 'landing' || view === 'select-fighters') && (
+          <footer className="bg-black py-6 px-4 text-center border-t border-[#333] relative z-10 text-xs text-gray-600 font-mono-numbers uppercase tracking-widest mt-auto">
+            © 2026 TokenBurner 3000. All rights reserved. Sanctioned by the Global Commission of Compute Wastage.
+          </footer>
+        )}
+      </div>
+    </>
+  );
+}
