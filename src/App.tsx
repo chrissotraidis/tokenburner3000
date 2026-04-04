@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import type { Fighter, Arena, ViewState, VerdictData } from './types';
 import { saveFightRecord } from './lib/storage';
 import { scoreFighter, totalScore, computeCost } from './lib/scoring';
@@ -31,6 +31,38 @@ export default function App() {
   const [verdictData, setVerdictData] = useState<VerdictData | null>(null);
   const [previousView, setPreviousView] = useState<ViewState>('landing');
   const [fightKey, setFightKey] = useState(0);
+
+  // Background music — starts on first user interaction (browser autoplay policy)
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const musicStartedRef = useRef(false);
+  const [volume, setVolume] = useState(1.0);
+  const [muted, setMuted] = useState(false);
+
+  useEffect(() => {
+    const audio = new Audio('/music/TokenErupT Stack.mp3');
+    audio.loop = true;
+    audio.volume = 1.0;
+    audioRef.current = audio;
+
+    const startMusic = () => {
+      if (!musicStartedRef.current && audioRef.current) {
+        audioRef.current.play().catch(() => {});
+        musicStartedRef.current = true;
+      }
+    };
+
+    document.addEventListener('click', startMusic, { once: true });
+    return () => {
+      document.removeEventListener('click', startMusic);
+      audio.pause();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.volume = muted ? 0 : volume;
+    }
+  }, [volume, muted]);
 
   const handleSelectFighter = useCallback((f: Fighter) => {
     if (!fighter1) {
@@ -148,6 +180,30 @@ export default function App() {
     <>
       <div className="scanlines" />
       <div className="min-h-screen bg-bg-dark text-white flex flex-col relative overflow-hidden">
+        {/* Volume controls */}
+        <div className="fixed top-3 right-3 z-50 flex items-center gap-2 bg-black/80 border border-gray-700 px-3 py-1.5 backdrop-blur-sm">
+          <button
+            onClick={() => setMuted(m => !m)}
+            className="text-sm cursor-pointer hover:text-neon-magenta transition-colors"
+            title={muted ? 'Unmute' : 'Mute'}
+          >
+            {muted || volume === 0 ? '🔇' : volume < 0.5 ? '🔉' : '🔊'}
+          </button>
+          <input
+            type="range"
+            min="0"
+            max="1"
+            step="0.05"
+            value={muted ? 0 : volume}
+            onChange={e => {
+              const v = parseFloat(e.target.value);
+              setVolume(v);
+              if (v > 0) setMuted(false);
+            }}
+            className="w-20 h-1 accent-neon-magenta cursor-pointer"
+          />
+        </div>
+
         {showTicker && <LiveTicker />}
 
         <main className={`flex-grow flex justify-center ${centerContent ? 'items-center' : 'items-start'}`}>
