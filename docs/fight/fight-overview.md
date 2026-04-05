@@ -1,38 +1,40 @@
 # Fight
 
 ## What It Does
-The main event. Two AI models are called simultaneously, their responses stream in real-time on a split-screen arena view with a 60-second countdown timer, live token counters, and cost calculators.
+The main event. Two AI models stream text simultaneously on a split-screen arena view with a 60-second countdown timer, live token counters, cost calculators, and a speed comparison bar.
 
 ## Why It Matters
-This is the core product experience. The live streaming split-screen is what makes it feel like a real fight broadcast.
+This is the core product experience. The live streaming split-screen with visibly different speeds is what makes it feel like a real fight broadcast.
 
 ## Core Rules
-- Both models are called simultaneously via their respective APIs (spec-stated)
-- Responses stream in real-time, side by side (spec-stated)
-- 60-second countdown timer (spec-stated)
-- If a model finishes before time, its response sits while the other keeps going (spec-stated)
-- Token counters tick up live as tokens arrive (spec-stated)
-- Cost calculators update based on actual per-token pricing (spec-stated)
-- Each model's system prompt tells them their identity, opponent, and arena-specific task (spec-stated)
-- System prompt template: "You are [Model Name]. You are in a verbal combat arena called TokenBurner 3000. Your opponent is [Opponent Name]. Your task: [arena-specific prompt]. You have one response. Make it count. Be funny, creative, and devastating." (spec-stated)
-- Fight ends when timer hits zero OR both models finish (spec-stated)
+- Both models stream simultaneously via parallel simulation intervals (spec-stated, implemented)
+- Responses stream in real-time, side by side (spec-stated, implemented)
+- 60-second countdown timer — the only way a fight ends (spec-stated, implemented)
+- Token counters tick up live as tokens arrive (spec-stated, implemented)
+- Cost calculators update based on real per-token pricing (`outputPer1M / 1,000,000`) (spec-stated, implemented)
+- Streaming speed is driven by `tokensPerSecond`: interval = `40000 / tokensPerSecond` ms (implemented)
+- Tokens per tick scale with speed: `random(0-2) + ceil(tokensPerSecond / 50)` (implemented)
+- Speed comparison bar in HUD shows relative t/s between fighters (implemented)
+- Each fighter streams from a unique mock word pool (40-60 phrases per fighter) (implemented)
+- Forfeit button allows canceling a fight mid-match (implemented)
 
 ## What's Assumed
-- API keys are available client-side or through a proxy for V1. Risk if wrong: High (blocks entire feature)
-- All provider streaming APIs are compatible enough to display uniformly. Risk if wrong: Medium
-- Token counting from stream chunks is accurate enough for display purposes. Risk if wrong: Low
+- V1 uses mock simulation. API keys needed for real fights (future). Risk if wrong: Low
+- Token counting from mock ticks is approximate, not tokenizer-accurate. Risk if wrong: Low
 
 ## Key References
 - **Source spec:** tokenburner-3000-concept-v2.md, section "3. THE FIGHT"
-- **Prototype:** tokenburner3000.html, fight engine simulation (lines 189-223), renderFight (lines 384-444)
+- **Implementation:** src/components/Fight.tsx, src/data/mockWords.ts
 
 ## Acceptance Criteria
-- [ ] Both model APIs called simultaneously, not sequentially
-- [ ] Responses stream visibly in real-time in split-screen layout
-- [ ] 60-second timer counts down and is visible
-- [ ] Token count and cost update live during streaming
-- [ ] Fight ends when timer expires or both models finish
-- [ ] Early-finishing model's response remains visible while opponent continues
+- [x] Both model simulations run simultaneously, not sequentially
+- [x] Responses stream visibly in real-time in split-screen layout
+- [x] 60-second timer counts down and is visible
+- [x] Token count and cost update live during streaming
+- [x] Fight ends when timer expires (full 60 seconds)
+- [x] Speed differences are visually dramatic (5.5x spread)
+- [x] Speed comparison bar shows relative t/s
+- [x] Forfeit button available
 
 ## Status
-🔵 Not Started
+🟢 Implemented

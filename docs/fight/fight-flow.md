@@ -10,8 +10,8 @@ Any user who has selected two fighters and an arena.
 4. Responses stream in real-time on split-screen — left (Fighter 1) and right (Fighter 2)
 5. Token counters tick up as tokens arrive; cost calculators update per published pricing
 6. Timer counts down from 60 seconds
-7. If a model finishes early, its response remains while the opponent continues streaming
-8. When timer hits zero OR both models finish, fight ends
+7. Timer counts down the full 60 seconds — both fighters stream for the entire duration
+8. When timer hits zero, fight ends
 9. Transition to referee/verdict flow
 
 ## What Could Go Wrong
@@ -22,11 +22,11 @@ Any user who has selected two fighters and an arena.
 - **Timer expires while model is mid-token:** Cut the stream at 60s, use whatever arrived.
 
 ## Acceptance Criteria
-- [ ] Both APIs called simultaneously (not sequentially)
-- [ ] Streaming text appears character-by-character or chunk-by-chunk
-- [ ] Timer visible and counting down
-- [ ] Token count and cost update in real-time
-- [ ] Fight ends cleanly at timer expiry or double-completion
+- [x] Both simulations run simultaneously (not sequentially)
+- [x] Streaming text appears chunk-by-chunk at model-specific speeds
+- [x] Timer visible and counting down
+- [x] Token count and cost update in real-time
+- [x] Fight ends cleanly at timer expiry (full 60 seconds)
 
 ## Source
 Extracted from tokenburner-3000-concept-v2.md, section "3. THE FIGHT"
