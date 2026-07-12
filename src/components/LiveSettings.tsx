@@ -7,6 +7,8 @@ import {
   type FighterLiveRoute, type LiveProviderId, type LiveStatus,
 } from '../lib/live';
 import FighterPortrait from './FighterPortrait';
+import { getFightRecords } from '../lib/storage';
+import { getRestrictedUnlocks, withExhibitionClearance } from '../lib/unlocks';
 
 interface LiveSettingsProps {
   routes: Record<string, FighterLiveRoute>;
@@ -24,7 +26,11 @@ export default function LiveSettings({ routes, budget, status, onRoutesChange, o
   const [busy, setBusy] = useState<string | null>(null);
   const [notice, setNotice] = useState('Keys live only in this server session. Restarting the server clears the vault.');
   const [consented, setConsented] = useState(false);
-  const readyCount = useMemo(() => FIGHTERS.filter(fighter => isLiveReady(fighter, routes, status)).length, [routes, status]);
+  const liveFighters = useMemo(() => {
+    const unlocks = getRestrictedUnlocks(getFightRecords());
+    return FIGHTERS.map(fighter => withExhibitionClearance(fighter, unlocks));
+  }, []);
+  const readyCount = useMemo(() => liveFighters.filter(fighter => isLiveReady(fighter, routes, status)).length, [liveFighters, routes, status]);
   const connectedCount = status ? Object.values(status.providers).filter(provider => provider.configured).length : 0;
 
   const action = async (id: string, operation: () => Promise<LiveStatus>, success: string) => {
@@ -40,7 +46,7 @@ export default function LiveSettings({ routes, budget, status, onRoutesChange, o
   };
 
   const setProvider = (fighterId: string, provider: LiveProviderId) => {
-    const fighter = FIGHTERS.find(item => item.id === fighterId);
+    const fighter = liveFighters.find(item => item.id === fighterId);
     if (!fighter) return;
     updateRoute(fighterId, { provider, modelId: suggestedModel(fighter, provider) });
   };
@@ -81,12 +87,12 @@ export default function LiveSettings({ routes, budget, status, onRoutesChange, o
         <section className="fighter-routing" aria-labelledby="fighter-routing-title">
           <header><Zap aria-hidden="true" /><div><h3 id="fighter-routing-title">Fighter Routing Matrix</h3><p>Display names and callable model IDs are deliberately separate.</p></div></header>
           <div className="route-list">
-            {FIGHTERS.map(fighter => {
+            {liveFighters.map(fighter => {
               const route = routes[fighter.id];
               const ready = isLiveReady(fighter, routes, status);
               return <article className={`fighter-route ${ready ? 'is-ready' : ''}`} key={fighter.id}>
                 <FighterPortrait fighterId={fighter.id} fighterName={fighter.name} className="route-avatar" />
-                <div className="route-identity"><b>{fighter.name}</b><span>{fighter.eligible ? (ready ? 'LIVE READY' : 'NEEDS ROUTE') : fighter.rosterTier.toUpperCase()}</span></div>
+                <div className="route-identity"><b>{fighter.name}</b><span>{fighter.eligible ? (ready ? 'LIVE READY' : fighter.rosterTier === 'restricted' ? 'CLEARED · NEEDS ROUTE' : 'NEEDS ROUTE') : fighter.rosterTier.toUpperCase()}</span></div>
                 <label>Provider<select value={route.provider} onChange={event => setProvider(fighter.id, event.target.value as LiveProviderId)}>{providerOptionsFor(fighter).map(id => <option value={id} key={id}>{LIVE_PROVIDERS.find(provider => provider.id === id)?.label ?? id}</option>)}</select></label>
                 <label>Model ID<input value={route.modelId} placeholder="No verified callable ID" onChange={event => updateRoute(fighter.id, { modelId: event.target.value })} /></label>
                 <div className="route-meter"><i className={ready ? 'ready' : ''} /><span>{ready ? 'METER ONLINE' : route.modelId ? 'KEY REQUIRED' : 'MODEL REQUIRED'}</span></div>

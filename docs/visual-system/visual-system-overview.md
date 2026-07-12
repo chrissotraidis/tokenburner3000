@@ -14,6 +14,10 @@ the existing React DOM interface and a complete flat fallback.
 - Output price drives heat-meter intensity; unknown price uses a review state. (superseded by Decision 014)
 - Reduce Effects and `prefers-reduced-motion` remove shake, flicker, hitstop, and zoom. (user-stated)
 - Essential information is never conveyed only by color, sound, motion, or haptics. (decided)
+- Operational and supporting text has a 12px desktop floor and an 11px compact
+  floor; primary reading text remains at least 15px desktop and 14px compact. (user-stated)
+- Face-off portraits use slow opposing parallax, animated corner light, and a
+  reactive versus core; the interaction remains usable with motion disabled. (user-stated)
 
 ## Acceptance Criteria
 
@@ -27,9 +31,11 @@ the existing React DOM interface and a complete flat fallback.
 - [x] Global controls never cover ticker or page content.
 - [x] Automatic events remain inside the fixed notification rail.
 - [x] Primary fight text remains at least 15px on desktop and 14px on compact screens.
+- [x] Operational labels and values meet the 12px desktop / 11px compact floor.
+- [x] Face-off motion and glow respond to hype without covering identities or controls.
+- [x] Historical fighter portraits resolve to real cabinet artwork, never broken-image placeholders.
 
 ## Status
 
-🟢 Implemented — the cabinet identity remains while the compact shell, internal
-panels, notification rail, readable fight type, and cost meters replace the old
-floating controls, banners, and flame canvas.
+🟢 Implemented — the cabinet identity, fixed shell, internal panels, readable
+type floor, progressive stage/face-off motion, and static fallback are aligned.

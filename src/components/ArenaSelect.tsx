@@ -4,15 +4,17 @@ import type { Arena, Fighter, FightRules } from '../types';
 import { ARENAS } from '../data/arenas';
 import { arenaArt } from '../lib/presentation';
 import FighterMark from './FighterMark';
+import SpectacleCanvas from './LazySpectacleCanvas';
 
 interface ArenaSelectProps {
   fighter1: Fighter;
   fighter2: Fighter;
+  effectsEnabled?: boolean;
   onSelectArena: (arena: Arena, rules: FightRules) => void;
   onBack: () => void;
 }
 
-export default function ArenaSelect({ fighter1, fighter2, onSelectArena, onBack }: ArenaSelectProps) {
+export default function ArenaSelect({ fighter1, fighter2, effectsEnabled = true, onSelectArena, onBack }: ArenaSelectProps) {
   const [selectedId, setSelectedId] = useState(ARENAS[0].id);
   const [freestylePrompt, setFreestylePrompt] = useState('');
   const [showFreestyle, setShowFreestyle] = useState(false);
@@ -33,6 +35,7 @@ export default function ArenaSelect({ fighter1, fighter2, onSelectArena, onBack 
   return (
     <div className="arena-screen stage-select-screen">
       <img className="stage-select-backdrop" src={arenaArt(selected.id)} alt="" />
+      <SpectacleCanvas variant="arena" intensity={.75 + selectedIndex * .12} pulse={selectedIndex + 1} reduced={!effectsEnabled} />
       <div className="stage-select-shade" />
 
       <header className="stage-select-header">
@@ -42,7 +45,7 @@ export default function ArenaSelect({ fighter1, fighter2, onSelectArena, onBack 
 
       <section className="stage-hero" aria-live="polite">
         <button className="stage-arrow" onClick={() => step(-1)} aria-label="Previous arena"><ChevronLeft aria-hidden="true" /></button>
-        <div className="stage-title-card">
+        <div className="stage-title-card" key={selected.id}>
           <div><MapPinned aria-hidden="true" /> STAGE {String(selectedIndex + 1).padStart(2, '0')} / {String(ARENAS.length).padStart(2, '0')}</div>
           <h3>{selected.name}</h3>
           <p>{selected.desc}</p>
