@@ -1,7 +1,14 @@
-import type { Fighter } from '../types';
-import { FIGHTERS } from '../data/fighters';
+import { useMemo, useState } from 'react';
+import { ChevronRight, Crosshair, LockKeyhole, Swords } from 'lucide-react';
+import type { Fighter, RosterTier } from '../types';
+import { displayPrice, FIGHTERS, ROSTER_TIER_LABELS } from '../data/fighters';
+import FighterPortrait from './FighterPortrait';
+import { isLiveReady, type FightMode, type FighterLiveRoute, type LiveStatus } from '../lib/live';
 
 interface FighterSelectProps {
+  mode?: FightMode;
+  liveRoutes?: Record<string, FighterLiveRoute>;
+  liveStatus?: LiveStatus | null;
   fighter1: Fighter | null;
   fighter2: Fighter | null;
   onSelectFighter: (f: Fighter) => void;
@@ -10,120 +17,113 @@ interface FighterSelectProps {
   onBack: () => void;
 }
 
-export default function FighterSelect({ fighter1, fighter2, onSelectFighter, onDeselectFighter, onConfirm, onBack }: FighterSelectProps) {
+const tiers: RosterTier[] = ['main', 'guest', 'restricted', 'legend'];
+
+export default function FighterSelect({ mode = 'exhibition', liveRoutes = {}, liveStatus = null, fighter1, fighter2, onSelectFighter, onDeselectFighter, onConfirm, onBack }: FighterSelectProps) {
+  const [tier, setTier] = useState<RosterTier>('main');
+  const visible = useMemo(() => FIGHTERS.filter(fighter => fighter.rosterTier === tier), [tier]);
+  const [highlightedId, setHighlightedId] = useState(visible[0]?.id ?? '');
+  const highlighted = visible.find(fighter => fighter.id === highlightedId) ?? visible[0] ?? null;
+
+  const choose = (fighter: Fighter) => {
+    onSelectFighter(fighter);
+    const next = visible.find(candidate => candidate.eligible && (mode !== 'live' || isLiveReady(candidate, liveRoutes, liveStatus)) && candidate.id !== fighter.id && candidate.id !== fighter1?.id);
+    if (next) setHighlightedId(next.id);
+  };
+
+  const redPreview = fighter1 ?? highlighted;
+  const bluePreview = fighter2 ?? (fighter1 ? highlighted : null);
+
   return (
-    <div className="p-8 max-w-7xl mx-auto relative z-10 min-h-[80vh] flex flex-col">
-      <div className="text-center mb-10">
-        <h2 className="text-5xl font-black uppercase tracking-tighter text-white mb-2 flicker">
-          Step 1: <span className="text-neon-cyan">Select Fighters</span>
-        </h2>
-        <p className="text-gray-400 font-mono uppercase text-xl">
-          {!fighter1
-            ? 'Choose Fighter 1 (Red Corner)'
-            : !fighter2
-            ? 'Choose Fighter 2 (Blue Corner)'
-            : 'Fighters Locked.'}
-        </p>
+    <div className="roster-screen arcade-roster screen-layout">
+      <header className="roster-broadcast-heading">
+        <div><span>{mode === 'live' ? 'SANCTIONED LIVE ROUTING VAULT' : 'GLOBAL COMMISSION FIGHTER VAULT'}</span><strong>CHOOSE YOUR MACHINES</strong></div>
+        <div className="roster-step"><b>{fighter1 ? (fighter2 ? 'MATCH LOCKED' : 'BLUE CORNER') : 'RED CORNER'}</b><small>{fighter1 && fighter2 ? 'Ready to sanction' : 'Select a combatant'}</small></div>
+      </header>
 
-        {/* Selected fighters summary with deselect */}
-        {(fighter1 || fighter2) && (
-          <div className="flex justify-center items-center gap-4 mt-4">
-            {fighter1 && (
-              <button
-                onClick={() => onDeselectFighter(1)}
-                className="flex items-center gap-2 bg-red-900/30 border border-red-800 px-3 py-1.5 text-sm font-bold uppercase hover:bg-red-900/60 transition-colors cursor-pointer"
-              >
-                <span>{fighter1.logo} {fighter1.name}</span>
-                <span className="text-red-400 text-xs">&#x2715;</span>
-              </button>
-            )}
-            {fighter1 && fighter2 && <span className="text-gray-600 italic">vs</span>}
-            {fighter2 && (
-              <button
-                onClick={() => onDeselectFighter(2)}
-                className="flex items-center gap-2 bg-blue-900/30 border border-blue-800 px-3 py-1.5 text-sm font-bold uppercase hover:bg-blue-900/60 transition-colors cursor-pointer"
-              >
-                <span>{fighter2.logo} {fighter2.name}</span>
-                <span className="text-blue-400 text-xs">&#x2715;</span>
-              </button>
-            )}
-          </div>
-        )}
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 flex-grow">
-        {FIGHTERS.map(f => {
-          const isF1 = fighter1?.id === f.id;
-          const isF2 = fighter2?.id === f.id;
-          const isSelected = isF1 || isF2;
-          const disabled = isSelected || (!!fighter1 && !!fighter2);
-
-          return (
-            <div
-              key={f.id}
-              onClick={() => !disabled && onSelectFighter(f)}
-              className={`relative bg-gray-950 border-2 p-4 transition-all duration-200
-                ${isSelected
-                  ? 'opacity-50 grayscale cursor-not-allowed border-gray-700'
-                  : disabled
-                  ? 'opacity-30 cursor-not-allowed border-gray-800'
-                  : `cursor-pointer hover:scale-105 hover:shadow-[0_0_20px_rgba(255,255,255,0.2)] ${f.borderColor}`
-                }`}
-            >
-              {isF1 && (
-                <div className="absolute top-0 right-0 bg-red-600 text-white font-black px-3 py-1 uppercase text-sm">
-                  Corner 1
-                </div>
-              )}
-              {isF2 && (
-                <div className="absolute top-0 right-0 bg-blue-600 text-white font-black px-3 py-1 uppercase text-sm">
-                  Corner 2
-                </div>
-              )}
-
-              <div className="flex items-center space-x-4 mb-4">
-                <div className="text-5xl">{f.logo}</div>
-                <div>
-                  <h3 className={`text-2xl font-black uppercase ${f.color}`}>{f.name}</h3>
-                  <div className="text-xs text-gray-400 italic">"{f.title}"</div>
-                </div>
-              </div>
-
-              <div className="font-mono text-xs text-gray-300 space-y-1">
-                <div className="flex justify-between border-b border-gray-800 pb-1">
-                  <span>Speed:</span> <span className="text-white">{f.tokensPerSecond} t/s</span>
-                </div>
-                <div className="flex justify-between border-b border-gray-800 pb-1">
-                  <span>Verbosity:</span> <span className={f.color}>{f.verbosity}</span>
-                </div>
-                <div className="flex justify-between border-b border-gray-800 pb-1">
-                  <span>Output $/1M:</span> <span className="text-neon-green">${f.outputPer1M.toFixed(2)}</span>
-                </div>
-                <div className="flex justify-between border-b border-gray-800 pb-1">
-                  <span>Signature:</span> <span className="text-gray-400">{f.signatureMove}</span>
-                </div>
-              </div>
-            </div>
-          );
-        })}
-      </div>
-
-      <div className="mt-8 flex justify-center gap-4">
-        <button
-          onClick={onBack}
-          className="border-2 border-gray-600 text-gray-400 font-black text-lg px-8 py-3 uppercase hover:border-white hover:text-white transition-colors cursor-pointer"
-        >
-          Back
-        </button>
-        {fighter1 && fighter2 && (
-          <button
-            onClick={onConfirm}
-            className="bg-neon-green text-black font-black text-3xl px-12 py-4 border-4 border-black uppercase shadow-[0_0_30px_#39ff14] hover:bg-white hover:shadow-[0_0_40px_white] transition-all cursor-pointer animate-bounce"
-          >
-            Confirm Matchup
+      <div className="roster-tabs" role="tablist" aria-label="Roster tiers">
+        {tiers.map(item => (
+          <button key={item} role="tab" aria-selected={tier === item} onClick={() => setTier(item)}>
+            {ROSTER_TIER_LABELS[item]} <span>{FIGHTERS.filter(f => f.rosterTier === item).length}</span>
           </button>
-        )}
+        ))}
+      </div>
+
+      <div className="fighter-select-arena">
+        <FighterPreview fighter={redPreview} side="red" locked={!!fighter1} onClear={fighter1 ? () => onDeselectFighter(1) : undefined} />
+
+        <section className="roster-matrix" aria-label={`${ROSTER_TIER_LABELS[tier]} fighters`}>
+          <div className="matrix-crosshair"><Crosshair aria-hidden="true" /> ROSTER MATRIX</div>
+          <div className="roster-tile-grid">
+            {visible.map((fighter, index) => {
+              const isF1 = fighter1?.id === fighter.id;
+              const isF2 = fighter2?.id === fighter.id;
+              const selected = isF1 || isF2;
+              const liveReady = mode !== 'live' || isLiveReady(fighter, liveRoutes, liveStatus);
+              const disabled = !fighter.eligible || !liveReady || selected || (!!fighter1 && !!fighter2);
+              return (
+                <button
+                  key={fighter.id}
+                  type="button"
+                  data-testid={`fighter-${fighter.id}`}
+                  disabled={disabled}
+                  onMouseEnter={() => setHighlightedId(fighter.id)}
+                  onFocus={() => setHighlightedId(fighter.id)}
+                  onClick={() => choose(fighter)}
+                  className={`roster-tile ${highlighted?.id === fighter.id ? 'is-highlighted' : ''} ${selected ? 'is-selected' : ''} ${!fighter.eligible ? 'is-restricted' : ''} ${!liveReady ? 'is-unrouted' : ''}`}
+                  aria-label={`${fighter.name}, ${fighter.title}${!liveReady ? ', needs live route' : ''}${isF1 ? ', red corner' : isF2 ? ', blue corner' : ''}`}
+                >
+                  <span className="tile-number">{String(index + 1).padStart(2, '0')}</span>
+                  <FighterPortrait fighterId={fighter.id} fighterName={fighter.name} className="tile-portrait" />
+                  <span className="tile-nameplate"><strong>{fighter.name}</strong><small>{fighter.provider}</small></span>
+                  {!fighter.eligible && <LockKeyhole className="tile-lock" aria-hidden="true" />}
+                  {mode === 'live' && fighter.eligible && <span className={`tile-live-state ${liveReady ? 'ready' : ''}`}>{liveReady ? 'LIVE' : 'ROUTE'}</span>}
+                  {isF1 && <i>RED</i>}{isF2 && <i>BLUE</i>}
+                </button>
+              );
+            })}
+          </div>
+          <div className="matrix-readout">
+            <span>{highlighted?.signature.name ?? 'NO SIGNAL'}</span>
+            <b>{mode === 'live' && highlighted && !isLiveReady(highlighted, liveRoutes, liveStatus) ? 'Configure this fighter route in Sanctioned Live settings.' : highlighted?.signature.description ?? 'Select an eligible fighter.'}</b>
+          </div>
+        </section>
+
+        <FighterPreview fighter={bluePreview} side="blue" locked={!!fighter2} onClear={fighter2 ? () => onDeselectFighter(2) : undefined} />
+      </div>
+
+      <div className="selection-dock arcade-selection-dock">
+        <button onClick={onBack} className="secondary-action">Back</button>
+        <div className="matchup-lock"><Swords aria-hidden="true" /><span>{fighter1?.name ?? 'RED TBD'}</span><b>VS</b><span>{fighter2?.name ?? 'BLUE TBD'}</span></div>
+        <button onClick={onConfirm} className="primary-action" disabled={!fighter1 || !fighter2}>Confirm Matchup <ChevronRight aria-hidden="true" /></button>
       </div>
     </div>
   );
+}
+
+function FighterPreview({ fighter, side, locked, onClear }: { fighter: Fighter | null; side: 'red' | 'blue'; locked: boolean; onClear?: () => void }) {
+  if (!fighter) return <aside className={`fighter-preview ${side} is-empty`}><Crosshair aria-hidden="true" /><strong>AWAITING TARGET</strong><small>Move through the roster matrix</small></aside>;
+  const intelligence = fighter.intelligenceIndex ?? 40;
+  const speed = Math.min(100, fighter.tokensPerSecond / 1.8);
+  const cost = fighter.outputPer1M == null ? 16 : Math.min(100, fighter.outputPer1M * 2);
+  return (
+    <aside className={`fighter-preview ${side} ${locked ? 'is-locked' : ''}`}>
+      <div className="preview-corner"><span>{side.toUpperCase()} CORNER</span>{locked && <b>LOCKED</b>}</div>
+      <div className="preview-character"><FighterPortrait fighterId={fighter.id} fighterName={fighter.name} className="preview-portrait" eager /></div>
+      <div className="preview-provider">{fighter.provider} · {fighter.availability}</div>
+      <h2>{fighter.name}</h2>
+      <em>“{fighter.title}”</em>
+      <dl className="preview-stats">
+        <Stat label="POWER" value={intelligence} display={fighter.intelligenceIndex ?? 'UNSEEDED'} />
+        <Stat label="SPEED" value={speed} display={`${fighter.tokensPerSecond} t/s`} />
+        <Stat label="BURN" value={cost} display={displayPrice(fighter)} />
+      </dl>
+      <div className="preview-signature"><span>SIGNATURE MOVE</span><strong>{fighter.signature.name}</strong><small>{fighter.signature.description}</small></div>
+      {onClear && <button className="preview-clear" onClick={onClear}>Release corner</button>}
+    </aside>
+  );
+}
+
+function Stat({ label, value, display }: { label: string; value: number; display: string | number }) {
+  return <div><dt>{label}</dt><dd>{display}</dd><span><i style={{ width: `${Math.max(8, Math.min(100, value))}%` }} /></span></div>;
 }

@@ -14,15 +14,17 @@ The verdict is the most shareable moment. The scoring system creates meaningful 
   - **Creative Strategy** — Style bonus: model personality affects score
   - **Token Efficiency Ratio** — Tokens per dollar: cheap fast models score higher
   - **Main Character Energy** — Partially random crowd factor, biased toward output volume
-- Verdict statement is randomly selected from 7 pre-written templates that reference fighter names and costs (implemented)
+- Verdict statement is assembled locally from result, arena, signatures, and
+  Commission-event context (implemented)
 - Dramatic 1.5-second pause before verdict display (spec-stated, implemented)
 - Arena goes to "Judging..." screen during the pause (implemented)
-- Winner determined by higher total score; ties go to fighter 1 (implemented)
+- Winner determined by higher total score; equal totals produce `winner: null`
+  and an explicit draw (implemented)
 - Per-fighter cost breakdown shown in the compute receipt (implemented)
 
 ## Scoring Design Intent
-- **Expensive verbose models** (Claude Opus, Grok) tend to win Devastation + Commitment
-- **Cheap fast models** (Llama, DeepSeek V3) tend to win Efficiency
+- **Expensive verbose models** tend to win Devastation + Commitment.
+- **Cheap fast models** such as DeepSeek V4 tend to win Efficiency.
 - **Creativity** adds personality-driven variance
 - **Main Character Energy** adds randomness to prevent fully deterministic outcomes
 - No fight outcome is guaranteed — there is always a chance the underdog wins
@@ -43,6 +45,8 @@ The verdict is the most shareable moment. The scoring system creates meaningful 
 - [x] Winner declared based on total score
 - [x] Scores displayed in side-by-side comparison with fighter labels
 - [x] Per-fighter cost breakdown in receipt
+- [x] Draws assign no hidden winner or loss
+- [x] Arena and event modifiers are visible in the official timeline
 
 ## Status
 🟢 Implemented (mock scoring — algorithmic, not AI-generated)

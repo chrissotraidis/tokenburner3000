@@ -1,38 +1,66 @@
 # Fighter Roster
 
 ## What It Does
-Defines the roster of 14 AI models available for combat, each with a fighter profile including name, nickname, real pricing data, speed rating, and visual identity. Users select two fighters from this roster to enter the arena.
+
+Defines a dated, source-aware roster of AI fighters. Each fighter combines a
+stable identity with volatile metadata such as price, availability, ranking,
+and verification date. Fighters are organized as Main Card, Guest Bench,
+Restricted, or Legends.
 
 ## Why It Matters
-Fighter identity and personality are what make each matchup feel different and shareable. The profiles are the first thing users engage with. Speed and cost differences create strategic matchup choices.
+
+Fighter identity is the product's main source of strategy, satire, and replay.
+The roster must remain current without deleting saved history or presenting
+unverified claims as facts.
 
 ## Core Rules
-- Each fighter has: real model name (styled as boxing alias), nickname/title, real API pricing, speed rating, fighter icon (spec-stated, implemented)
-- 14 fighters from 7 providers: Anthropic (3), OpenAI (3), Google (2), Meta (1), DeepSeek (2), xAI (1), Mistral (1), Cohere (1) (implemented)
-- Fighter data model includes: `tokensPerSecond`, `inputPer1M`, `outputPer1M`, `style`, `provider`, `signatureMove` (implemented)
-- Speed ranges from 45 t/s (o3) to 250 t/s (Llama 4 Maverick) — a 5.5x spread (implemented)
-- Output pricing ranges from $0.28/1M (DeepSeek V3) to $25.00/1M (Claude Opus 4) (implemented)
-- User must select exactly 2 different fighters per fight (spec-stated, implemented)
-- Fighter 1 = Red Corner, Fighter 2 = Blue Corner (code-derived, implemented)
-- A fighter cannot fight itself (code-derived, implemented)
-- Selected fighters can be deselected via X buttons (implemented)
-- Hardcoded `winRate` removed — win rate is computed from actual fight records (decided)
 
-## What's Assumed
-- Fighter stats use real published API pricing but fights are simulated (mock mode). Risk if wrong: Low
-- The roster is hardcoded, not dynamically discovered from API availability. Risk if wrong: Medium
+- The July 11, 2026 snapshot is the active roster baseline. (user-stated)
+- Main Card contains approximately 16 normally selectable fighters. (decided)
+- Guest fighters rotate without changing the core selection contract. (decided)
+- Restricted fighters are visible but cannot enter ordinary bouts. (decided)
+- Legends preserve historical identity and saved records. (decided)
+- GPT-5.6 is one Sol/Terra/Luna mode-switching fighter. (decided)
+- Stable identity is separate from price, availability, verification, and rank. (decided)
+- Every volatile fact has a verification state and last-verified date. (decided)
+- Unknown price is represented as unknown, never zero. (decided)
+- Speed is a tunable game stat unless explicitly labeled as measured throughput. (decided)
+- Historical fighter snapshots remain renderable after retirement or renaming. (decided)
+- A user selects exactly two eligible, different fighters. (implemented)
 
-## Key References
-- **Source spec:** tokenburner-3000-concept-v2.md, section "1. PICK YOUR FIGHTERS"
-- **Implementation:** src/data/fighters.ts (14 fighters), src/components/FighterSelect.tsx
+## Roster Presentation
+
+- Default view shows the Main Card.
+- Guest Bench, Restricted, and Legends are separate filterable sections.
+- Every fighter has a distinct generated arcade-character portrait keyed by its
+  stable fighter ID. Portraits share one visual direction but preserve persona,
+  provider-era color, and signature-move lore. (user-stated)
+- Roster tiles use portrait crops and full dossiers use the uncropped portrait;
+  fighter names and eligibility remain text and are never baked into art. (decided)
+- Under-review fields display `COMMISSION REVIEW`.
+- Restricted cards explain why they cannot be selected.
+- Fighter cards show persona, provider, speed, price state, seed, and signature.
 
 ## Acceptance Criteria
-- [x] At least 4 fighters displayed with name, nickname, icon, and stats
-- [x] User can select exactly 2 different fighters
-- [x] Selected fighters are visually distinguished (corner labels, disabled state)
-- [x] Selection flows to arena select with both fighters confirmed
-- [x] 14 fighters with real pricing and speed data
-- [x] Fighter deselection via X buttons
+
+- [x] Main Card, Guest Bench, Restricted, and Legends are distinguishable.
+- [x] Only eligible fighters can be selected for ordinary fights.
+- [x] GPT-5.6 appears as one fighter with three runtime modes.
+- [x] Unknown prices display `COMMISSION REVIEW`, not `$0`.
+- [x] Every fighter exposes verification state and verification date.
+- [x] Retired fighter IDs remain resolvable in historical records.
+- [x] Existing saved fights remain visible after the roster upgrade.
+- [x] Exactly two different eligible fighters can be confirmed.
+- [x] All current Main, Guest, Restricted, and Legend IDs resolve to a portrait.
+- [x] Portrait loading does not alter selection, eligibility, or keyboard behavior.
+
+## Related
+
+- `docs/reference/2026-07-11-roster-snapshot.md`
+- `docs/decisions/008-versioned-roster-tiers.md`
+- `docs/decisions/009-gpt-5-6-tri-mode-fighter.md`
 
 ## Status
-🟢 Implemented
+
+🟢 Implemented — versioned tiers, provenance, tri-mode GPT-5.6, eligibility,
+legacy ID resolution, and historical snapshots are active.

@@ -1,36 +1,30 @@
 # Arena Select
 
 ## What It Does
-Lets the user choose a battle topic/mode that determines the prompt framework for the fight. Each arena type provokes a different style of verbal combat.
 
-## Why It Matters
-Arena variety is what keeps fights fresh. Different modes produce fundamentally different content, driving replayability and shareability.
+Lets the user choose the rule set, prompt framework, content pool, and scoring
+modifiers for a fight. Arena selection must materially change what happens.
 
 ## Core Rules
-- 5 arena types defined (spec-stated):
-  - **THE ROAST PIT** — Models directly trash-talk each other. No mercy. Maximum verbal devastation.
-  - **THE DEBATE RING** — Models argue opposite sides of an absurd proposition.
-  - **THE EXPLAIN-OFF** — Both models explain a ridiculous concept, scored on creativity and commitment.
-  - **THE FILIBUSTER** — Each model tries to say as much as possible about nothing. Pure verbosity competition.
-  - **FREESTYLE** — User writes their own battle prompt.
-- V1 minimum: Roast Pit + Freestyle (spec-stated)
-- Arena selection happens after fighter selection (spec-stated)
-- Each arena has a name and description displayed to the user (code-derived)
-- Selecting an arena immediately starts the fight (code-derived)
 
-## What's Assumed
-- Freestyle mode needs a text input for the user's custom prompt. Risk if wrong: Low
-- Arena types are hardcoded, not user-creatable. Risk if wrong: Low
-
-## Key References
-- **Source spec:** tokenburner-3000-concept-v2.md, section "2. CHOOSE THE ARENA"
-- **Prototype:** tokenburner3000.html, ARENAS constant (line 84-89)
+- Roast Pit rewards attacks and callbacks and raises aggression frequency. (user-stated)
+- Debate Ring assigns opposing positions and rewards rebuttals. (user-stated)
+- Explain-Off adds a mandatory explanation/metaphor constraint. (user-stated)
+- Filibuster rewards sustained output and penalizes repetition. (user-stated)
+- Freestyle uses and preserves the user's custom prompt. (user-stated)
+- The selected arena and prompt appear on the VS and verdict screens. (user-stated)
+- Every arena supplies phrase tags and scoring modifiers to the event engine. (decided)
 
 ## Acceptance Criteria
-- [ ] At least 2 arena types displayed (Roast Pit + Freestyle for V1)
-- [ ] Each arena shows name and description
-- [ ] Freestyle mode accepts a custom user prompt
-- [ ] Selecting an arena proceeds to the fight screen
+
+- [x] All five arenas display a clear rule summary before selection.
+- [x] Freestyle requires and preserves a non-empty custom prompt.
+- [x] The same matchup behaves differently in at least three arenas.
+- [x] Arena modifiers are recorded in the fight event log.
+- [x] Verdict copy explains arena modifiers that affected scoring.
+- [x] Changing fighters and returning does not silently reuse a stale prompt.
 
 ## Status
-🔵 Not Started
+
+🟢 Implemented — arena phrase pools, scoring profiles, Freestyle mandate, and
+fight-start rule event are active.

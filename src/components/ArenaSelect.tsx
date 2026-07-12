@@ -1,99 +1,110 @@
 import { useState } from 'react';
-import type { Fighter, Arena } from '../types';
+import { ChevronLeft, ChevronRight, MapPinned, RadioTower, WandSparkles } from 'lucide-react';
+import type { Arena, Fighter, FightRules } from '../types';
 import { ARENAS } from '../data/arenas';
+import { arenaArt } from '../lib/presentation';
+import FighterMark from './FighterMark';
 
 interface ArenaSelectProps {
   fighter1: Fighter;
   fighter2: Fighter;
-  onSelectArena: (arena: Arena, customPrompt?: string) => void;
+  onSelectArena: (arena: Arena, rules: FightRules) => void;
   onBack: () => void;
 }
 
 export default function ArenaSelect({ fighter1, fighter2, onSelectArena, onBack }: ArenaSelectProps) {
+  const [selectedId, setSelectedId] = useState(ARENAS[0].id);
   const [freestylePrompt, setFreestylePrompt] = useState('');
   const [showFreestyle, setShowFreestyle] = useState(false);
+  const [commissionEnabled, setCommissionEnabled] = useState(true);
+  const [commentaryEnabled, setCommentaryEnabled] = useState(true);
+  const [venue, setVenue] = useState<'global' | 'eu'>('global');
+  const selected = ARENAS.find(arena => arena.id === selectedId) ?? ARENAS[0];
+  const selectedIndex = ARENAS.findIndex(arena => arena.id === selected.id);
 
-  const handleSelect = (arena: Arena) => {
-    if (arena.id === 'freestyle') {
-      setShowFreestyle(true);
-    } else {
-      onSelectArena(arena);
-    }
-  };
-
-  const handleFreestyleSubmit = () => {
-    const freestyle = ARENAS.find(a => a.id === 'freestyle')!;
-    if (freestylePrompt.trim()) {
-      onSelectArena(freestyle, freestylePrompt.trim());
-    }
+  const rules = (customPrompt = ''): FightRules => ({ customPrompt, commissionEnabled, commentaryEnabled, venue });
+  const confirm = () => selected.id === 'freestyle' ? setShowFreestyle(true) : onSelectArena(selected, rules());
+  const step = (direction: -1 | 1) => {
+    const next = (selectedIndex + direction + ARENAS.length) % ARENAS.length;
+    setSelectedId(ARENAS[next].id);
+    setShowFreestyle(false);
   };
 
   return (
-    <div className="p-8 max-w-5xl mx-auto relative z-10 min-h-[80vh] flex flex-col items-center">
-      <div className="text-center mb-12 w-full">
-        <h2 className="text-5xl font-black uppercase tracking-tighter text-white mb-2 flicker">
-          Step 2: <span className="text-neon-orange">Select Arena</span>
-        </h2>
-        <div className="flex justify-center items-center space-x-6 mt-6 bg-black/50 p-4 border border-[#333]">
-          <span className="text-2xl">{fighter1.logo}</span>
-          <span className="font-bold text-xl">{fighter1.name}</span>
-          <span className="text-gray-600 italic">VS</span>
-          <span className="font-bold text-xl">{fighter2.name}</span>
-          <span className="text-2xl">{fighter2.logo}</span>
-        </div>
-      </div>
+    <div className="arena-screen stage-select-screen">
+      <img className="stage-select-backdrop" src={arenaArt(selected.id)} alt="" />
+      <div className="stage-select-shade" />
 
-      <button
-        onClick={onBack}
-        className="self-start mb-6 border border-gray-600 text-gray-400 font-bold px-4 py-2 uppercase text-sm hover:text-white hover:border-white transition-colors cursor-pointer"
-      >
-        &larr; Change Fighters
-      </button>
+      <header className="stage-select-header">
+        <div><span>WORLD CIRCUIT STAGE SELECT</span><h2>CHOOSE THE <b>KILLBOX</b></h2></div>
+        <div className="stage-matchup"><FighterMark fighterId={fighter1.id} /><strong>{fighter1.name}</strong><b>VS</b><strong>{fighter2.name}</strong><FighterMark fighterId={fighter2.id} /></div>
+      </header>
 
-      {showFreestyle ? (
-        <div className="w-full max-w-2xl flex flex-col gap-4">
-          <h3 className="text-2xl font-black uppercase text-neon-orange">Freestyle Prompt</h3>
-          <p className="text-gray-400 font-mono text-sm">
-            The commission allows creative freedom. Write your battle prompt below.
-          </p>
-          <textarea
-            value={freestylePrompt}
-            onChange={e => setFreestylePrompt(e.target.value)}
-            placeholder="E.g., 'Argue about whether hotdogs are sandwiches like your career depends on it.'"
-            className="w-full h-40 bg-black border-2 border-neon-orange text-white p-4 font-mono text-sm resize-none focus:outline-none focus:shadow-[0_0_15px_rgba(255,94,0,0.5)]"
-          />
-          <div className="flex gap-4">
-            <button
-              onClick={handleFreestyleSubmit}
-              disabled={!freestylePrompt.trim()}
-              className="bg-neon-orange text-black font-black text-xl px-8 py-3 uppercase hover:bg-white transition-colors cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
-            >
-              Start Fight
-            </button>
-            <button
-              onClick={() => setShowFreestyle(false)}
-              className="border border-gray-600 text-gray-400 font-bold px-6 py-3 uppercase hover:text-white hover:border-white transition-colors cursor-pointer"
-            >
-              Back
-            </button>
+      <section className="stage-hero" aria-live="polite">
+        <button className="stage-arrow" onClick={() => step(-1)} aria-label="Previous arena"><ChevronLeft aria-hidden="true" /></button>
+        <div className="stage-title-card">
+          <div><MapPinned aria-hidden="true" /> STAGE {String(selectedIndex + 1).padStart(2, '0')} / {String(ARENAS.length).padStart(2, '0')}</div>
+          <h3>{selected.name}</h3>
+          <p>{selected.desc}</p>
+          <strong>{selected.ruleSummary}</strong>
+          <div className="stage-modifiers">
+            <Modifier label="AGGRO" value={selected.modifiers.aggression} />
+            <Modifier label="REBUTTAL" value={selected.modifiers.rebuttal} />
+            <Modifier label="CREATIVE" value={selected.modifiers.creativity} />
+            <Modifier label="VOLUME" value={selected.modifiers.volume} />
           </div>
         </div>
-      ) : (
-        <div className="flex flex-col space-y-4 w-full">
-          {ARENAS.map(a => (
+        <button className="stage-arrow" onClick={() => step(1)} aria-label="Next arena"><ChevronRight aria-hidden="true" /></button>
+      </section>
+
+      <div className="stage-select-bottom">
+        <div className="stage-carousel" role="listbox" aria-label="Fight arenas">
+          {ARENAS.map((arena, index) => (
             <button
-              key={a.id}
-              onClick={() => handleSelect(a)}
-              className="text-left w-full bg-gray-900 border-l-8 border-neon-orange p-6 hover:bg-gray-800 hover:ml-4 transition-all duration-200 group cursor-pointer"
+              key={arena.id}
+              type="button"
+              role="option"
+              aria-selected={arena.id === selected.id}
+              data-testid={`arena-${arena.id}`}
+              onClick={() => { setSelectedId(arena.id); setShowFreestyle(false); }}
+              className={arena.id === selected.id ? 'is-selected' : ''}
             >
-              <h3 className="text-3xl font-black uppercase text-white group-hover:text-neon-orange">
-                {a.name}
-              </h3>
-              <p className="font-mono text-gray-400 mt-2">{a.desc}</p>
+              <img src={arenaArt(arena.id)} alt="" />
+              <span>{String(index + 1).padStart(2, '0')}</span>
+              <strong>{arena.name}</strong>
             </button>
           ))}
         </div>
+
+        <div className="stage-rules-console">
+          <div><RadioTower aria-hidden="true" /><span>MATCH CONDITIONS</span></div>
+          <label><input type="checkbox" checked={commissionEnabled} onChange={event => setCommissionEnabled(event.target.checked)} /> COMMISSION</label>
+          <label><input type="checkbox" checked={commentaryEnabled} onChange={event => setCommentaryEnabled(event.target.checked)} /> COMMENTARY</label>
+          <label>VENUE<select value={venue} onChange={event => setVenue(event.target.value as 'global' | 'eu')}><option value="global">GLOBAL</option><option value="eu">EU</option></select></label>
+        </div>
+      </div>
+
+      {showFreestyle && (
+        <div className="freestyle-console stage-freestyle">
+          <WandSparkles aria-hidden="true" />
+          <h3>GENERATE THE MANDATE</h3>
+          <p>The prompt becomes the physical law of this arena.</p>
+          <textarea value={freestylePrompt} onChange={event => setFreestylePrompt(event.target.value)} maxLength={500} placeholder="Argue whether hotdogs are sandwiches like your market cap depends on it." autoFocus />
+          <div>{freestylePrompt.length}/500</div>
+          <button type="button" data-testid="file-mandate" className="primary-action" disabled={!freestylePrompt.trim()} onClick={() => onSelectArena(selected, rules(freestylePrompt.trim()))}>File Mandate</button>
+          <button className="secondary-action" onClick={() => setShowFreestyle(false)}>Cancel</button>
+        </div>
       )}
+
+      <div className="stage-actions">
+        <button onClick={onBack} className="secondary-action">Change Fighters</button>
+        <button data-testid="confirm-arena" onClick={confirm} className="primary-action">{selected.id === 'freestyle' ? 'Write Mandate' : 'Sanction This Arena'} <ChevronRight aria-hidden="true" /></button>
+      </div>
     </div>
   );
+}
+
+function Modifier({ label, value }: { label: string; value: number }) {
+  const width = Math.min(100, Math.max(12, value / 1.6 * 100));
+  return <div><span>{label}</span><i><b style={{ width: `${width}%` }} /></i><strong>{value.toFixed(2)}×</strong></div>;
 }

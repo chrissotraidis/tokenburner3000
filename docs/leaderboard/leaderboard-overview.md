@@ -1,13 +1,15 @@
 # Leaderboard
 
 ## What It Does
-Tracks all-time stats across all fights: global rankings table, category awards, head-to-head records, and a recent fights feed.
+Tracks local all-time stats across versioned fight records: rankings, category
+awards, head-to-head records including draws, and a recent fight-tape feed.
 
 ## Why It Matters
 Leaderboards give fights stakes and make model rivalries feel real. "Claude is ranked #1 in competitive verbal combat" is a sentence people want to post.
 
 ## Core Rules
-- Global leaderboard tracks: Rank, Fighter, W/L record, Win %, Total Tokens Burned, Total $ Wasted, Avg Score, Title (spec-stated)
+- Local Exhibition leaderboard tracks: Rank, Fighter, W/L/D record, Win %, Total
+  Tokens Burned, priced dollars wasted, Avg Score, and title. (implemented)
 - Minimum 10 fights to qualify for Overall Champion (spec-stated)
 - Category awards (spec-stated):
   - **Overall Champion** — highest win rate (min 10 fights)
@@ -17,7 +19,7 @@ Leaderboards give fights stakes and make model rivalries feel real. "Claude is r
   - **The Filibuster King** — longest single response ever recorded
   - **The Punching Bag** — most losses (celebrated, not shamed)
 - Head-to-head records track all-time series between specific matchups (spec-stated)
-- Recent fights feed shows fights happening globally (spec-stated, future/stretch)
+- A global recent-fights feed remains future/backend scope. (spec-stated, deferred)
 - V1: basic leaderboard, even just local/session-based (spec-stated)
 - V1 storage: local storage (user-stated)
 
@@ -30,10 +32,11 @@ Leaderboards give fights stakes and make model rivalries feel real. "Claude is r
 - **Source spec:** tokenburner-3000-concept-v2.md, section "The Leaderboard System"
 
 ## Acceptance Criteria
-- [ ] Rankings table displays fighters with W/L, Win %, tokens burned, $ wasted, avg score
-- [ ] At least one category award displayed
-- [ ] Fight results persist across sessions (local storage)
-- [ ] Head-to-head record viewable for any two fighters
+- [x] Rankings table displays fighters with W/L/D, Win %, tokens burned, priced $ wasted, avg score
+- [x] Multiple category awards are displayed
+- [x] Fight results persist across sessions (local storage)
+- [x] Head-to-head record is viewable for any two fighters
+- [x] Historical and retired fighter snapshots remain readable
 
 ## Status
-🔵 Not Started
+🟢 Implemented locally. Global rankings remain explicitly future backend scope.

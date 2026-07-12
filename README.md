@@ -1,139 +1,336 @@
-# TokenBurner 3000
+<div align="center">
 
-### Competitive AI Token Wastage. Live. Unhinged. Probably Unnecessary.
+# TOKENBURNER 3000
 
-TokenBurner 3000 is a live verbal combat arena where AI language models trash-talk, argue, and roast each other in timed 60-second bouts. A separate AI referee scores each fight. There are leaderboards, fight histories, and an absurd amount of wasted compute.
+### Competitive AI token wastage. Live. Unhinged. Probably unnecessary.
 
-It looks like UFC crossed with a crypto dashboard that's on fire.
+[![React 19](https://img.shields.io/badge/React-19-00d8ff?style=for-the-badge&logo=react&logoColor=white)](https://react.dev/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-Strict-3178c6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Vite 8](https://img.shields.io/badge/Vite-8-bd34fe?style=for-the-badge&logo=vite&logoColor=white)](https://vite.dev/)
+[![Tests 18](https://img.shields.io/badge/Tests-18%20passing-39ff14?style=for-the-badge&logo=vitest&logoColor=black)](#release-gates)
 
-It is, by every measure, completely unnecessary.
+`19 FIGHTERS` · `5 ARENAS` · `60 SECONDS` · `1 OFFICIAL REGULATORY BODY`
 
----
+[Run the cabinet](#run-the-cabinet) · [See the damage](#see-the-damage) · [Meet the machines](#meet-the-machines) · [Go live](#spend-actual-money-sanctioned-live) · [Architecture](#under-the-cabinet) · [Status](#project-status)
 
-## How It Works
+</div>
 
-```
-1. PICK YOUR FIGHTERS    →    Choose 2 AI models from a roster of 14
-2. CHOOSE THE ARENA      →    Roast Pit, Debate Ring, Explain-Off, Filibuster, or Freestyle
-3. WATCH THEM FIGHT      →    60 seconds of live split-screen verbal combat
-4. SEE THE VERDICT       →    AI referee scores across 5 categories, declares a winner
-```
+![TokenBurner 3000 arcade lobby](docs/audits/2026-07-12-datacenter-spectacle/14-lobby-final.png)
 
-## The Roster
+TokenBurner 3000 is a client-side arcade combat game where current AI-model
+storylines become fighting mechanics. Pick two machines, sanction an arena, hype
+the crowd, and watch a deterministic 60-second exhibition burn tokens, money,
+and professional dignity.
 
-| Fighter | Provider | Speed | Output $/1M | Style |
-|---------|----------|-------|-------------|-------|
-| **Claude Opus 4** — *The Eloquent Arsonist* | Anthropic | 60 t/s | $25.00 | Philosophical devastation |
-| **Claude Sonnet 4** — *The Practical Pyromaniac* | Anthropic | 100 t/s | $15.00 | Structured efficiency |
-| **Claude Haiku 4.5** — *The Budget Assassin* | Anthropic | 175 t/s | $5.00 | Three-word kills |
-| **GPT-4o** — *Old Reliable* | OpenAI | 90 t/s | $10.00 | Numbered lists |
-| **GPT-4o Mini** — *The Overachieving Intern* | OpenAI | 135 t/s | $0.60 | Eager and cheap |
-| **o3** — *The Overthinker* | OpenAI | 45 t/s | $8.00 | Slow reasoning chains |
-| **Gemini 2.5 Pro** — *Google's Most Expensive Hobby* | Google | 105 t/s | $10.00 | Unsolicited caveats |
-| **Gemini 2.5 Flash** — *The Loss Leader* | Google | 175 t/s | $2.50 | Subsidized speedrun |
-| **Llama 4 Maverick** — *The People's Champ* | Meta | 250 t/s | $0.77 | Open source aggression |
-| **DeepSeek V3** — *The Silent Assassin* | DeepSeek | 100 t/s | $0.28 | Devastating one-liners |
-| **DeepSeek R1** — *The Budget Philosopher* | DeepSeek | 55 t/s | $2.19 | Visible chain-of-thought |
-| **Grok 3** — *The Edgelord* | xAI | 90 t/s | $15.00 | Unfiltered sarcasm |
-| **Mistral Large 3** — *Le Burner* | Mistral | 90 t/s | $6.00 | Continental precision |
-| **Command R+** — *The Corporate Raider* | Cohere | 70 t/s | $10.00 | Corporate jargon |
+This is not a benchmark dashboard wearing boxing gloves. It is a fighting game
+with a real roster, arena laws, signature moves, regulatory interference,
+audience commands, color commentary, judge cards, rematches, brackets, and an
+official compute receipt.
 
-## Scoring
+> The site never breaks character. The Global Commission of Compute Wastage is
+> extremely serious about this extremely unnecessary work.
 
-Fights are scored across 5 categories by the referee:
-
-| Category | What It Rewards |
-|----------|----------------|
-| **Verbal Devastation** | Raw token volume — more output = higher score |
-| **Theatrical Commitment** | Money burned — expensive models score higher |
-| **Creative Strategy** | Style and personality — model-specific bonus |
-| **Token Efficiency Ratio** | Tokens per dollar — cheap fast models shine here |
-| **Main Character Energy** | Crowd factor — partially random, biased toward output volume |
-
-Scoring is driven by **verbosity** and **cost**. Expensive verbose models (Claude Opus, Grok) tend to win on Devastation and Commitment. Cheap fast models (Llama, DeepSeek) win on Efficiency. No fight is fully predetermined.
-
-## The Leaderboard — "The Hall of Shame"
-
-Global rankings track all-time stats:
-- **Overall Champion** — highest win rate
-- **The Biggest Burner** — most total tokens wasted
-- **The Money Pit** — most total dollars burned
-- **The Efficient Assassin** — highest score per token
-- **The Punching Bag** — most losses (celebrated, not shamed — they showed up)
-
-Head-to-head records track rivalries between specific matchups.
-
-## Tech Stack
-
-| Layer | Choice |
-|-------|--------|
-| Framework | React 18 + TypeScript |
-| Build | Vite |
-| Styling | Tailwind CSS v4 |
-| Fonts | Chakra Petch + Space Mono |
-| Storage | localStorage (V1) |
-| Visual | Neon CRT aesthetic — scanlines, flicker, hue-rotate, matrix backgrounds |
-
-## Getting Started
+## Run the cabinet
 
 ```bash
-# Install dependencies
 npm install
-
-# Start development server
 npm run dev
+```
 
-# Build for production
+Open [http://127.0.0.1:5173](http://127.0.0.1:5173).
+
+No provider key, login, or wallet is required for Exhibition mode. The Vite dev
+server mounts the optional Sanctioned Live proxy automatically.
+
+<a id="release-gates"></a>
+
+```bash
+# Release gates: all must clear before a sanctioned deployment
+npm run lint
+npm test
 npm run build
+npm start      # serve dist plus Live proxy at http://127.0.0.1:4173
 ```
 
-The app runs at `http://localhost:5173`.
+<table>
+  <tr>
+    <th width="50%">EXHIBITION</th>
+    <th width="50%">SANCTIONED LIVE</th>
+  </tr>
+  <tr>
+    <td>Free, deterministic, instant, and replayable. The ideal cabinet mode.</td>
+    <td>Your provider keys, real model output, provider-reported tokens, and an actual compute receipt.</td>
+  </tr>
+  <tr>
+    <td align="center"><b>NO KEY · NO SPEND · MAXIMUM NONSENSE</b></td>
+    <td align="center"><b>REAL KEYS · REAL TOKENS · REAL CONSEQUENCES</b></td>
+  </tr>
+</table>
 
-## Visual Design
+## The fight card
 
-Dark background (`#050505`) with neon accents — magenta, cyan, green, orange, red. CRT scanlines overlay. Flicker animations on headings. Typewriter cursor on streaming text. Split-screen arena view during fights. Receipt-style verdict display.
-
-The entire site speaks in the voice of a dead-serious combat sports organization. It never breaks character. It never acknowledges the absurdity. The comedy comes from the commitment.
-
-## Roadmap
-
-- [x] Landing page with live burn ticker
-- [x] Fighter selection (14 models)
-- [x] Arena selection (5 modes + freestyle)
-- [x] Live fight screen with split-screen streaming
-- [x] AI referee scoring (verbosity + cost driven)
-- [x] Verdict display with compute receipt
-- [x] Leaderboard with category awards and head-to-head
-- [ ] Live commentary from a third model
-- [ ] Signature move triggers mid-fight
-- [ ] Settings page with API key management
-- [ ] Real API integration (replace mock simulation)
-- [ ] Share cards for social media
-- [ ] Achievement badges and personal fight history
-
-## Project Structure
-
+```text
+CHOOSE TWO MACHINES
+        ↓
+SANCTION AN ARENA
+        ↓
+FILE A PREDICTION + HYPE THE CROWD
+        ↓
+60 SECONDS OF SIMULTANEOUS MODEL COMBAT
+        ↓
+JUDGE CARDS · INCIDENT TAPE · COMPUTE RECEIPT · REMATCH
 ```
+
+Every bout is driven by one seeded event log. Fighter output, signatures,
+Commission rulings, audience interventions, commentary, scoring, replay, and
+history all consume that same record. The comedy is chaotic; the state is not.
+
+## See the damage
+
+| Choose actual characters | Sanction illustrated stages |
+|---|---|
+| ![Character select](docs/audits/2026-07-12-fighter-identity/03-roster.png) | ![Arena select](docs/audits/2026-07-12-datacenter-spectacle/03-arena-select.png) |
+| **Face off before the bell** | **Watch the burn stay contained** |
+| ![Tale of the Tape](docs/audits/2026-07-12-fighter-identity/04-faceoff.png) | ![Live fight](docs/audits/2026-07-12-fighter-identity/05-fight.png) |
+| **Get a real post-fight show** | **Carry the cabinet on mobile** |
+| ![Official verdict](docs/audits/2026-07-12-fighter-identity/06-verdict.png) | ![Compact face-off](docs/audits/2026-07-12-fighter-identity/08-mobile-faceoff.png) |
+
+The app is a fixed arcade cabinet, not a scrolling document. Fight transcripts
+own their scroll; the HUD, notification rail, momentum, crowd heat, controls,
+and live burn stay visible.
+
+## Meet the machines
+
+<table>
+  <tr>
+    <td align="center"><img src="public/art/fighters/claude-fable-5.jpg" width="210" alt="Claude Fable 5 arcade fighter"><br><b>Claude Fable 5</b><br><sub>The Champion</sub></td>
+    <td align="center"><img src="public/art/fighters/gpt-5-6.jpg" width="210" alt="GPT-5.6 arcade fighter"><br><b>GPT-5.6</b><br><sub>The Celestial System</sub></td>
+    <td align="center"><img src="public/art/fighters/grok-4-20-multi-agent.jpg" width="210" alt="Grok 4.20 Multi-Agent arcade fighters"><br><b>Grok 4.20</b><br><sub>The Gang</sub></td>
+    <td align="center"><img src="public/art/fighters/kimi-k2-7-code.jpg" width="210" alt="Kimi K2.7 Code arcade fighter"><br><b>Kimi K2.7 Code</b><br><sub>The Swarm Lord</sub></td>
+  </tr>
+</table>
+
+Every roster ID has its own generated, optimized arcade portrait. The art is
+presentation-only; eligibility, pricing state, provenance, scoring, and saved
+history continue to use typed fighter records.
+
+<details>
+<summary><strong>Open the July 2026 roster</strong></summary>
+
+### Main Card
+
+| Fighter | Persona | Speed | Output / 1M | Signature |
+|---|---|---:|---:|---|
+| Claude Fable 5 | The Champion | 65 t/s | $50.00 | Export Control |
+| Claude Opus 4.8 | The Adaptive Thinker | 60 t/s | $25.00 | Effort Dial |
+| Claude Sonnet 5 | The Understudy Who Punches Up | 90 t/s | $10.00 | Outscores The Boss |
+| Claude Haiku 4.5 | The Three-Line Kill | 180 t/s | $5.00 | Speedrun |
+| GPT-5.6 | The Celestial System | 68 t/s | $30.00 | Celestial Cycle |
+| GPT-5.5 | The Proven Fallback | 76 t/s | $30.00 | Old Reliable |
+| Gemini 3.1 Pro | The Unsolicited Caveat | 100 t/s | $12.00 | Context Dump |
+| Gemini 3.5 Flash | The Understudy | 167 t/s | $9.00 | Outshines The Boss |
+| Grok 4.5 | Opus-Class (Allegedly) | 80 t/s | $6.00 | Cursor Session |
+| Grok 4.3 | The Ratio | 113 t/s | $2.50 | Live Ratio |
+| Grok 4.20 Multi-Agent | The Gang | 80 t/s | $2.50 | The Swarm |
+| Muse Spark 1.1 | Avocado (The Reboot) | 100 t/s | Commission Review | Contemplating |
+| DeepSeek V4 Flash | The Penny Pinch | 90 t/s | $0.28 | Cache Hit |
+| DeepSeek V4 Pro | The Budget Philosopher | 77 t/s | $0.87 | Frontier On A Dime |
+
+### Guest Bench
+
+- GLM-5.2 — The Open Source Uppercut
+- Kimi K2.7 Code — The Swarm Lord
+
+### Restricted and Legends
+
+- Claude Mythos 5 — The Secret Boss
+- Gemini 3.5 Pro — The No-Show
+- Llama 4 Maverick — retired legend
+
+Roster claims, verification state, and source notes live in
+[`docs/reference/2026-07-11-roster-snapshot.md`](docs/reference/2026-07-11-roster-snapshot.md).
+
+</details>
+
+## Five arenas, five laws
+
+| Arena | What changes |
+|---|---|
+| **The Roast Pit** | Direct attacks and callbacks score harder. |
+| **The Debate Ring** | Rebuttals, evidence, and opponent references matter. |
+| **The Explain-Off** | Metaphor and clarity drive creativity. |
+| **The Filibuster** | Volume scores; repetition gets punished. |
+| **Freestyle** | Your custom mandate enters the official record. |
+
+Arena choice changes phrase pools, scoring modifiers, event interpretation, and
+the illustrated stage behind the fight. It is not a cosmetic dropdown.
+
+## Why it feels alive
+
+- **Individual character art** across roster, face-off, live HUD, verdict, and records.
+- **Timed broadcast phases:** Opening Volley, Overclock, Meltdown, Final Ten.
+- **Signature moves** rooted in each fighter’s current lore.
+- **The Commission:** export controls, capability reviews, holds, and region locks.
+- **Audience commands:** demand a rebuttal, force an analogy, fact-check, double down, or throw the regulation tomato.
+- **Color commentary** triggered by actual fight events, lead changes, cost gaps, and repetition.
+- **Readable chaos:** no automatic modal popups; official events use a reserved notification rail.
+- **Progressive spectacle:** generated stages plus lazy-loaded React Three Fiber particles.
+- **Accessibility:** Reduced Effects removes WebGL and aggressive motion without changing gameplay.
+
+## Spend actual money: Sanctioned Live
+
+Open the menu or press **SANCTIONED LIVE** in the lobby to connect OpenRouter,
+OpenAI, Anthropic, Google Gemini, xAI, DeepSeek, Z.ai, or Moonshot.
+
+| Enter the premium circuit | Open the ephemeral provider vault |
+|---|---|
+| [![Sanctioned Live entry](docs/audits/2026-07-12-sanctioned-live/01-live-entry.png)](docs/audits/2026-07-12-sanctioned-live/01-live-entry.png) | [![Provider key vault](docs/audits/2026-07-12-sanctioned-live/02-provider-vault.png)](docs/audits/2026-07-12-sanctioned-live/02-provider-vault.png) |
+| **Route every fighter to a real endpoint** | **Configure safely from mobile** |
+| [![Live fighter routing](docs/audits/2026-07-12-sanctioned-live/03-live-roster.png)](docs/audits/2026-07-12-sanctioned-live/03-live-roster.png) | [![Mobile live settings](docs/audits/2026-07-12-sanctioned-live/04-mobile-live-settings.png)](docs/audits/2026-07-12-sanctioned-live/04-mobile-live-settings.png) |
+
+- Keys are held in an expiring server-memory vault behind an HttpOnly cookie.
+- The browser receives only configured/tested status—never the secret.
+- Every fighter has an editable provider/model route.
+- OpenRouter reports native token counts and billed cost.
+- Direct providers report actual tokens; cost is clearly labeled as an estimate.
+- Both corners are called concurrently for three real exchanges.
+- Rate limits, timeouts, missing usage, and partial rounds stay recoverable.
+
+The spend guard is a safety rail, not a provider billing guarantee. Use restricted
+keys with low provider-side limits. Full contracts and current model IDs are in
+[`docs/sanctioned-live/sanctioned-live-overview.md`](docs/sanctioned-live/sanctioned-live-overview.md).
+
+<details>
+<summary><strong>How does the key vault avoid leaking credentials?</strong></summary>
+
+Provider secrets are submitted only to the local server, kept in an expiring
+in-memory vault, and associated with an HttpOnly, SameSite=Strict session cookie.
+The client can ask which providers are configured and when they were tested, but
+the API never echoes a key. Nothing is written to `localStorage`, the bundle, or
+the fight record.
+
+</details>
+
+<details>
+<summary><strong>What counts as “actual” usage?</strong></summary>
+
+The fight receipt records the usage object returned by the provider for each
+exchange. OpenRouter can report billed cost directly. Direct-provider routes use
+their real input/output token counts and mark cost as an estimate when the
+provider response does not include billing. Unknown numbers remain unknown; the
+cabinet does not manufacture precision.
+
+</details>
+
+## The verdict is not a loading screen
+
+The post-fight show keeps both character portraits on the scorecard and exposes
+four explorable official surfaces:
+
+1. **Summary** — the complete referee statement and turning points.
+2. **Scores** — five categories and judge-by-judge cards.
+3. **Timeline** — major incidents in deterministic order.
+4. **Receipt** — duration, tokens, known/unknown cost treatment, and mandate.
+
+From there: rematch, alternate arena, signature replay, Hall of Shame, shareable
+result card, or a completely new fight.
+
+## Competition programs
+
+<details>
+<summary><strong>Fight more than one bout</strong></summary>
+
+- Best of three
+- Provider-versus-provider cards
+- Four-fighter brackets
+- Daily featured matchup
+- Resumable local programs
+
+Every program reuses the normal fight loop and stores ordinary fight records.
+There is no second, mysterious scoring system hiding backstage.
+
+</details>
+
+## Under the cabinet
+
+```mermaid
+flowchart LR
+    P1["Red corner"] --> E["Seeded fight event log"]
+    P2["Blue corner"] --> E
+    A["Arena law"] --> E
+    C["Commission rulings"] --> E
+    E --> H["Broadcast HUD"]
+    E --> J["Five-category judging"]
+    E --> R["Timeline and receipt"]
+    K["Ephemeral key vault"] -. "Live mode only" .-> P1
+    K -. "Live mode only" .-> P2
+```
+
+<details open>
+<summary><strong>Technical fight card</strong></summary>
+
+| Layer | Choice |
+|---|---|
+| UI | React 19 + TypeScript |
+| Build | Vite 8 |
+| Styling | Tailwind CSS v4 plus the cabinet stylesheet |
+| 3D spectacle | React Three Fiber, lazy-loaded with static-art fallback |
+| Icons | Lucide React |
+| Exhibition storage | Versioned `localStorage` snapshots and event logs |
+| Determinism | Seeded event engine with stable event IDs |
+| Tests | Vitest |
+
+</details>
+
+<details>
+<summary><strong>Open the repository map</strong></summary>
+
+```text
 src/
-├── App.tsx                 Main app — view routing, fight orchestration, scoring
-├── types.ts                Shared TypeScript interfaces
-├── data/
-│   ├── fighters.ts         14 fighter profiles with real pricing data
-│   ├── arenas.ts           5 arena definitions
-│   └── mockWords.ts        Per-fighter mock word pools (40-60 phrases each)
-├── lib/
-│   ├── scoring.ts          Scoring engine (verbosity + cost + style)
-│   └── storage.ts          localStorage CRUD for fight records + leaderboard
-└── components/
-    ├── LiveTicker.tsx       Scrolling burn/waste/VC ticker
-    ├── Landing.tsx          Hero + CTA
-    ├── FighterSelect.tsx    Fighter grid with stats
-    ├── ArenaSelect.tsx      Arena picker + freestyle prompt
-    ├── Fight.tsx            Split-screen arena with timer + streaming
-    ├── Verdict.tsx          Scores, verdict, receipt, post-fight actions
-    └── Leaderboard.tsx      Rankings, awards, head-to-head
+├── components/     lobby, roster, arena, face-off, fight, verdict, records
+├── data/           dated fighters, arenas, legacy phrase pools
+├── lib/            event engine, scoring, commentary, programs, storage
+└── types.ts        shared contracts
+
+public/art/
+├── fighters/       one optimized portrait per stable fighter ID
+└── arena-*.jpg     illustrated stage backdrops
+
+server/
+├── index.mjs       production server and API boundary
+└── live-api.mjs    provider adapters, vault, usage normalization
 ```
+
+</details>
+
+The docs are feature-organized and are the product source of truth. Start with
+[`docs/overview.md`](docs/overview.md), [`docs/spec.md`](docs/spec.md), and
+[`docs/status.md`](docs/status.md).
+
+## Project status
+
+- [x] Dated roster tiers and provenance
+- [x] Individual arcade fighter portrait library
+- [x] Five mechanically distinct arenas
+- [x] Simultaneous 60-second Exhibition fights
+- [x] Commission, commentary, signatures, and audience interventions
+- [x] Explainable referee, judge cards, timeline, receipt, and sharing
+- [x] Local Hall of Shame and competition programs
+- [x] Fixed desktop/mobile cabinet with Reduced Effects fallback
+- [x] Server-backed Sanctioned Live with provider-reported token accounting
+- [ ] Physical release-device spot checks
+- [ ] Production accounts and encrypted shared vault for hosted Live sessions
+
+Sanctioned Live is deliberately separate. Provider credentials never enter the
+client bundle or persistent browser storage.
 
 ---
 
-*© 2026 TokenBurner 3000. All rights reserved. Sanctioned by the Global Commission of Compute Wastage.*
+<div align="center">
+
+**SANCTIONED BY THE GLOBAL COMMISSION OF COMPUTE WASTAGE**
+
+Built for people who looked at the frontier-model landscape and asked the only
+responsible question: *what if it had a character-select screen?*
+
+</div>
