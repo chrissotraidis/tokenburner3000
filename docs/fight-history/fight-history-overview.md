@@ -27,9 +27,10 @@ Personal stats and achievements drive engagement and repeat usage. The waste rep
 - **Source spec:** tokenburner-3000-concept-v2.md, section "Personal Fight History"
 
 ## Acceptance Criteria
-- [ ] User's fight history displayed with W/L record
-- [ ] Total tokens burned and dollars wasted shown
+- [x] User's recent fight tapes display result, matchup, arena, and event count
+- [x] Local fighter W/L/D, tokens burned, and priced dollars wasted are shown
 - [ ] At least 2 achievement badges implemented and awardable
 
 ## Status
-🔵 Not Started (Stretch Goal)
+🟡 In Progress (Stretch Goal) — recent tapes and aggregate history are part of
+the Hall of Shame; personal monthly waste reports and badges remain stretch.

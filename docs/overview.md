@@ -1,20 +1,27 @@
 # TokenBurner 3000
 
 ## What We're Building
-A live verbal combat arena where AI language models trash-talk, argue, and roast each other in timed 60-second bouts. A separate AI referee scores each fight. There are leaderboards, fight histories, and an absurd amount of wasted compute. It looks like UFC crossed with a crypto dashboard that's on fire. It is, by every measure, completely unnecessary.
+A vector-arcade combat game where current AI model storylines become fighter
+mechanics. Models battle in timed 60-second Exhibition bouts governed by arena
+rules, signature moves, Commission rulings, audience interventions, commentary,
+and an explainable referee. Cost burn is the central visual spectacle. Optional
+real-provider fights run in an isolated, server-backed Sanctioned Live mode.
 
 ## Who It's For
 People who enjoy watching AI models fight, sharing absurd results, and contributing to the noble cause of computational waste. The product is a content generation machine disguised as a game.
 
 ## Core Features
-- **Fighter Roster:** AI models with boxing-style profiles, fake stats, and nicknames
-- **Arena Select:** Battle topics/modes (Roast Pit, Debate Ring, Explain-Off, Filibuster, Freestyle)
-- **The Fight:** Split-screen streaming with 60s timer, live token counting, cost tracking
-- **Commentary:** Sassy third model providing live color commentary (stretch)
-- **Referee:** Post-fight scoring by a judge model across 5 categories, dramatic verdict
-- **Post-Fight:** Share cards, fight receipts, rematch buttons
-- **Leaderboard:** Global rankings, category awards, head-to-head records
+- **Fighter Roster:** Versioned Main Card, Guest, Restricted, and Legends tiers
+- **Arena Select:** Rule sets that change generation, events, and scoring
+- **The Fight:** Split-screen simulation driven by a shared deterministic event log
+- **The Commission:** Rare, recoverable regulatory satire events
+- **Commentary:** Event-driven local color commentary
+- **Audience Interventions:** Two charged actions that bend the next exchange
+- **Referee:** Local seeded scoring across five categories, judge cards, and dramatic verdict
+- **Post-Fight:** Explainable verdict, timeline, replay, receipt, and share card
+- **Leaderboard:** Local rankings, category awards, head-to-head records, and tapes
 - **Fight History:** Personal stats, waste reports, achievement badges (stretch)
+- **Vector Arcade:** Progressive CRT cabinet, restrained cost meters, and fixed broadcast frame
 
 ## Tone
 The entire site speaks in the voice of a dead-serious combat sports organization that happens to be about AI models arguing. It never breaks character. It never acknowledges the absurdity. The comedy comes from the commitment.
@@ -23,13 +30,24 @@ The entire site speaks in the voice of a dead-serious combat sports organization
 The original specification is at `docs/reference/tokenburner-3000-concept-v2.md`. Arnold's feature docs are derived from it. When in doubt, the spec is authoritative.
 
 ## Design Reference
-The existing landing page prototype is at `docs/tokenburner3000.html` — a React component with neon CRT/glitch aesthetic (Chakra Petch + Space Mono fonts, dark background, neon magenta/cyan/green/orange/red palette, scanlines, flicker effects). All new pages should match this visual language.
+The existing neon CRT prototype remains a visual ancestor. The active direction
+is the progressive vector-arcade system in `docs/visual-system/`.
 
 ## Current Status
-🟡 In Progress — spec decomposed into feature docs. Landing page prototype exists. Core game loop not yet implemented.
+🟢 Arcade upgrade and Sanctioned Live implemented — the sourced July 2026 roster, shared event
+engine, arena mechanics, Commission, commentary, interventions, vector cabinet,
+post-fight replay/sharing, local competition programs, ephemeral provider vault,
+and provider-metered Live bouts are active. Physical device spot checks and
+production account/secret infrastructure remain release follow-ups.
 
 ## Next Steps
-- [ ] Review each feature's overview for accuracy
-- [ ] Run `/arnold:plan` to flesh out flows and edge cases
-- [ ] Start building the first feature
-- [ ] Run `/arnold:check` after coding to verify alignment
+- [x] Freeze a sourced July 11 roster snapshot
+- [x] Record roster, GPT-5.6, event-engine, and presentation decisions
+- [x] Implement foundation fixes and storage compatibility
+- [x] Implement the shared event engine
+- [x] Implement arena, signature, Commission, commentary, and audience rules
+- [x] Implement the progressive vector-arcade presentation
+- [x] Implement Tale of the Tape, timeline, sharing, and local competition programs
+- [x] Run `/arnold:check` and live acceptance verification
+- [x] Pass a constrained full-effects runtime budget; repeat as physical-device release QA
+- [x] Design and implement optional Sanctioned Live through a secure server-side proxy

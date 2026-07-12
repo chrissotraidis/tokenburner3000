@@ -23,10 +23,12 @@ First impression. The landing page establishes the dead-serious combat sports to
 - **Prototype:** tokenburner3000.html, renderLanding (lines 269-294), LiveTicker component (lines 107-140)
 
 ## Acceptance Criteria
-- [ ] Hero title with neon glitch/flicker effects matching prototype aesthetic
-- [ ] Live burn ticker scrolling with token count, dollar count, VC funding
-- [ ] "Enter The Arena" CTA button navigates to fighter select
-- [ ] Footer with dead-serious copyright line
+- [x] Hero title with neon glitch/flicker effects matching prototype aesthetic
+- [x] Live burn ticker scrolling with token count, dollar count, VC funding
+- [x] "Enter The Arena" CTA button navigates to fighter select
+- [x] Fight Programs opens local series, cards, bracket, and daily modes
+- [x] Footer with dead-serious copyright line
 
 ## Status
-🟡 In Progress — prototype exists, needs production implementation
+🟢 Implemented — cabinet landing, ticker, Exhibition, Fight Programs, Hall of
+Shame, and footer are active.
