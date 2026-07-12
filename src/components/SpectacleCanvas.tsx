@@ -5,7 +5,7 @@ import * as THREE from 'three';
 
 export interface SpectacleCanvasProps {
   intensity?: number;
-  variant?: 'lobby' | 'faceoff' | 'fight';
+  variant?: 'lobby' | 'arena' | 'faceoff' | 'fight';
   reduced?: boolean;
   pulse?: number;
 }
@@ -59,7 +59,7 @@ function EnergyCore({ intensity, variant, pulse }: Required<Pick<SpectacleCanvas
     const surge = 1 + Math.sin(state.clock.elapsedTime * 2.2 + pulse) * .035 * intensity;
     group.current.scale.setScalar(surge);
   });
-  const scale = variant === 'fight' ? 1.15 : variant === 'faceoff' ? 1.45 : 1.8;
+  const scale = variant === 'fight' ? 1.15 : variant === 'faceoff' ? 1.45 : variant === 'arena' ? 1.6 : 1.8;
   return (
     <group ref={group} position={[0, 0, -4]} scale={scale}>
       <Float speed={1.4 + intensity * .3} rotationIntensity={.18} floatIntensity={.2}>

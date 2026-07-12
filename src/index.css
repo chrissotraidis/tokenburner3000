@@ -627,6 +627,76 @@ body { min-width: 320px; }
   .verdict-show{padding:.35rem}.verdict-show .verdict-frame{grid-template-rows:auto minmax(140px,.78fr) auto minmax(0,1.35fr) auto;padding:.35rem;gap:.3rem}.verdict-broadcast-header .commission-kicker{font-size:.43rem}.verdict-broadcast-header h2{font-size:1.45rem}.verdict-broadcast-header>span{display:none}.verdict-showcase{grid-template-columns:1fr 7.3rem 1fr;gap:.25rem}.verdict-fighter-name{left:.3rem;right:.3rem;bottom:.3rem}.verdict-fighter-name>span,.verdict-fighter-name small{display:none}.verdict-fighter-name h3{font-size:.58rem}.verdict-fighter-score{top:.25rem;right:.3rem}.verdict-fighter-score strong{font-size:1.45rem}.decision-winner{top:.25rem;left:.25rem;padding:.2rem;font-size:0}.decision-winner svg{width:14px}.verdict-decision-core{grid-template-columns:1fr;padding:.3rem;gap:.25rem}.verdict-decision-core>strong{font-size:.65rem}.winner-medallion{width:44px;height:44px}.verdict-decision-core>div{display:none}.verdict-show .verdict-tabs button{min-width:4.5rem;font-size:.55rem;padding:.4rem}.verdict-show .verdict-panel{padding:.25rem}.referee-report header{padding:.35rem}.referee-report header b{font-size:.58rem}.referee-report p{padding:.5rem;font-size:.75rem;line-height:1.45}.verdict-jump-grid{grid-template-columns:1fr}.verdict-jump-grid button{min-height:40px}.verdict-show .highlight-grid{grid-template-columns:1fr}.verdict-show .verdict-actions{grid-template-columns:repeat(3,minmax(0,1fr));gap:.25rem}.verdict-show .verdict-actions button{min-height:36px;font-size:.48rem}.verdict-show .verdict-actions button svg{width:12px;height:12px}
 }
 
+/* ── Commission clearance, stage energy, and readability pass ────── */
+.roster-matrix.has-clearance{grid-template-rows:auto auto minmax(0,1fr) auto}
+.clearance-console{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.45rem;margin:.4rem 0;padding:.5rem;border:1px solid #60431f;background:rgba(18,10,3,.9)}
+.clearance-console>div{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:.45rem;padding:.5rem;border:1px solid #60431f;background:#0d0804}
+.clearance-console>div.is-cleared{border-color:#287535;background:#071108;box-shadow:inset 3px 0 #39ff14}
+.clearance-console svg{width:20px;color:#ff8b32}.clearance-console .is-cleared svg{color:#39ff14}
+.clearance-console span,.clearance-console b,.clearance-console small{display:block;min-width:0}.clearance-console b{overflow:hidden;font-size:.75rem;text-transform:uppercase;white-space:nowrap;text-overflow:ellipsis}.clearance-console small{color:#c58b61;font:.7rem 'Space Mono',monospace}.clearance-console strong{color:#ff9b55;font:.75rem 'Space Mono',monospace}.clearance-console .is-cleared strong{color:#39ff14}
+.clearance-console i{grid-column:1/-1;height:4px;overflow:hidden;background:#252a2c}.clearance-console i em{display:block;height:100%;background:#ff5e00;box-shadow:0 0 8px #ff5e00}.clearance-console .is-cleared i em{background:#39ff14;box-shadow:0 0 8px #39ff14}
+.roster-tile.is-cleared{border-color:#39ff14;box-shadow:inset 0 0 18px rgba(57,255,20,.13)}
+.tile-clearance{position:absolute;z-index:4;top:.25rem;right:.25rem;padding:.14rem .28rem;color:#031003;background:#39ff14;font:800 .64rem 'Space Mono',monospace;letter-spacing:.05em}
+
+.stage-select-screen>.spectacle-canvas{z-index:-1;opacity:.58;mix-blend-mode:screen}
+.stage-select-backdrop{transform:scale(1.035);animation:stage-camera-drift 10s ease-in-out infinite alternate}
+.stage-title-card{animation:stage-card-arrival .38s cubic-bezier(.2,.8,.2,1),stage-card-charge 2.4s .4s ease-in-out infinite alternate}
+.stage-carousel button.is-selected{animation:stage-thumbnail-charge 1.6s ease-in-out infinite alternate}
+@keyframes stage-camera-drift{from{transform:scale(1.035) translate3d(-.5%,0,0);filter:saturate(1.12) brightness(.68)}to{transform:scale(1.075) translate3d(.5%,-.7%,0);filter:saturate(1.34) brightness(.82)}}
+@keyframes stage-card-arrival{from{opacity:.35;transform:perspective(800px) rotateX(8deg) scale(.94);filter:blur(5px)}to{opacity:1;transform:none;filter:none}}
+@keyframes stage-card-charge{to{border-color:#ff31dc;box-shadow:0 0 30px rgba(255,49,220,.22),inset 0 0 22px rgba(0,238,255,.08)}}
+@keyframes stage-thumbnail-charge{to{box-shadow:0 0 24px rgba(255,27,214,.68),inset 0 0 12px rgba(255,255,255,.12)}}
+
+.faceoff-fighter.red{animation:red-corner-charge 2.8s ease-in-out infinite alternate}
+.faceoff-fighter.blue{animation:blue-corner-charge 2.8s -.8s ease-in-out infinite alternate}
+.faceoff-fighter.red .faceoff-character-art{animation:red-fighter-drift 8s ease-in-out infinite alternate}
+.faceoff-fighter.blue .faceoff-character-art{animation:blue-fighter-drift 8s -.9s ease-in-out infinite alternate}
+.faceoff-identity{animation:identity-signal 2.2s ease-in-out infinite alternate}
+.faceoff-core{box-shadow:inset 0 0 48px rgba(255,94,0,.1);animation:versus-reactor 2.2s ease-in-out infinite alternate}
+.faceoff-core>b{animation:versus-pulse 1.3s ease-in-out infinite alternate}
+.hype-50 .faceoff-character-art{filter:brightness(.76) saturate(1.2)}.hype-75 .faceoff-character-art{filter:brightness(.82) saturate(1.3)}
+@keyframes red-corner-charge{to{box-shadow:inset 8px 0 #ff1744,0 0 28px rgba(255,23,68,.25)}}
+@keyframes blue-corner-charge{to{box-shadow:inset -8px 0 #00cfff,0 0 28px rgba(0,207,255,.25)}}
+@keyframes red-fighter-drift{from{transform:scale(1.02) translateX(-.7%)}to{transform:scale(1.065) translateX(.8%)}}
+@keyframes blue-fighter-drift{from{transform:scale(1.02) translateX(.7%)}to{transform:scale(1.065) translateX(-.8%)}}
+@keyframes identity-signal{to{border-color:#9defff;box-shadow:0 0 22px rgba(66,231,255,.18),inset 0 0 14px rgba(255,255,255,.05)}}
+@keyframes versus-reactor{to{border-color:#ff5e00;box-shadow:inset 0 0 68px rgba(255,94,0,.17),0 0 24px rgba(255,94,0,.12)}}
+@keyframes versus-pulse{to{transform:scale(1.06);text-shadow:0 0 10px #fff,0 0 28px #ff5e00,4px 0 #ff31dc,-4px 0 #43efff}}
+
+/* Operational copy stays readable without flattening the arcade hierarchy. */
+.command-context span,.command-status,.drawer-heading span,.drawer-settings label,.setting-toggle small,.live-settings-shortcut small,
+.roster-broadcast-heading span,.roster-step small,.preview-corner,.preview-provider,.preview-stats dt,.preview-signature span,.preview-signature small,.preview-clear,.matrix-crosshair,.matrix-readout span,.matrix-readout b,.matchup-lock,
+.stage-select-header span,.stage-title-card>div:first-child,.stage-title-card>strong,.stage-modifiers span,.stage-modifiers strong,.stage-carousel span,.stage-carousel strong,.stage-rules-console,
+.faceoff-header>span,.faceoff-header>small,.faceoff-identity .corner-call,.faceoff-fighter dt,.faceoff-core>span,.faceoff-core>small,.faceoff-core button,.faceoff-intel span,.faceoff-intel strong,.risk-notice,.official-mandate,.prediction-box>span,
+.fight-notification span,.fight-notification small,.momentum-readout,.phase-readout span,.crowd-readout,.burn-meter span,.burn-meter strong,.commentary-strip,.intervention-button,.forfeit-button,
+.provider-vault header p,.fighter-routing header p,.provider-key-card p,.provider-key-card label,.provider-key-card input,.provider-key-actions button,.route-identity span,.fighter-route label,.fighter-route select,.fighter-route input,.route-meter,.live-budget small,.billing-consent,.live-security-rail,
+.live-fight-header span,.live-corner header span,.live-corner header small,.live-output-scroll article>span,.live-output-scroll article small,.live-corner>footer span,.live-fight-actions>span,.live-fight-actions button,
+.verdict-broadcast-header .commission-kicker,.referee-report header span,.verdict-jump-grid span,.verdict-jump-grid b,.replay-notice span,.replay-notice small{font-size:.75rem}
+.command-context strong{font-size:.9rem}.drawer-settings h2{font-size:.95rem}.setting-toggle b,.live-settings-shortcut b{font-size:.85rem}
+.roster-tabs button,.record-tabs button,.verdict-tabs button{font-size:.82rem}.roster-tile .tile-nameplate strong{font-size:.75rem}.roster-tile .tile-nameplate small{font-size:.68rem}.roster-tile .tile-number,.roster-tile>i{font-size:.64rem}
+.preview-stats dd{font-size:.8rem}.preview-signature strong{font-size:1rem}.fighter-preview.is-empty small{font-size:.75rem}
+.stage-matchup{font-size:.82rem}.stage-title-card p{font-size:1.08rem}.stage-rules-console select{min-height:30px;font-size:.75rem}
+.faceoff-identity h3{font-size:clamp(1.05rem,1.7vw,1.5rem)}.faceoff-identity em{font-size:.78rem}.faceoff-fighter dd{font-size:.82rem}.faceoff-core>strong{font-size:1.55rem}.prediction-box button{font-size:.78rem}
+.phase-readout b{font-size:.78rem}.leaderboard-fighter small{font-size:.7rem}.live-output-scroll article p{font-size:clamp(.94rem,1.2vw,1.08rem)}
+
+[data-effects="reduced"] .stage-select-backdrop,[data-effects="reduced"] .stage-title-card,[data-effects="reduced"] .stage-carousel button.is-selected,
+[data-effects="reduced"] .faceoff-fighter,[data-effects="reduced"] .faceoff-character-art,[data-effects="reduced"] .faceoff-identity,[data-effects="reduced"] .faceoff-core,[data-effects="reduced"] .faceoff-core>b{animation:none!important;transform:none!important}
+
+@media (max-width:700px){
+  .clearance-console{grid-template-columns:1fr;max-height:7.6rem;overflow:auto;padding:.3rem}.clearance-console>div{padding:.35rem}.clearance-console b,.clearance-console small,.clearance-console strong{font-size:.69rem}
+  .roster-tile .tile-nameplate strong,.roster-tile .tile-number,.tile-clearance{font-size:.69rem}
+  .command-context strong{font-size:.78rem}.roster-tabs button,.record-tabs button,.verdict-tabs button{font-size:.72rem}
+  .stage-title-card>strong,.stage-modifiers span,.stage-modifiers strong,.stage-carousel strong,.stage-rules-console{font-size:.69rem}.stage-title-card p{font-size:.88rem}
+  .faceoff-header>span,.faceoff-header>small,.faceoff-identity .corner-call,.faceoff-fighter dt,.faceoff-core>span,.faceoff-core>small,.faceoff-intel span,.faceoff-intel strong,.risk-notice,.official-mandate,.prediction-box>span{font-size:.69rem}
+  .faceoff-identity h3{font-size:.72rem}.faceoff-fighter dd,.prediction-box button{font-size:.72rem}.faceoff-core button{font-size:0}
+  .fight-notification span,.fight-notification strong,.phase-readout b,.fighter-pane footer,.burn-total,.intervention-button,.forfeit-button{font-size:.69rem}
+  .provider-vault header p,.fighter-routing header p,.provider-key-card p,.provider-key-card label,.provider-key-card input,.provider-key-actions button,.route-identity span,.fighter-route label,.fighter-route select,.fighter-route input,.route-meter,.live-budget small,.billing-consent,.live-security-rail,.live-fight-header span,.live-corner header span,.live-corner header small,.live-output-scroll article>span,.live-output-scroll article small,.live-corner>footer span,.live-fight-actions>span,.live-fight-actions button{font-size:.69rem}
+  .route-list{overflow:auto}.fighter-route{min-width:42rem}.provider-key-actions button{font-size:.69rem}.live-output-scroll article p{font-size:.875rem}
+  .verdict-broadcast-header .commission-kicker,.referee-report header span,.referee-report header b,.verdict-jump-grid span,.verdict-jump-grid b,.replay-notice span,.replay-notice small,.verdict-show .verdict-actions button{font-size:.69rem}
+}
+
+@media (max-width:700px){.faceoff-identity .corner-call{letter-spacing:.04em;white-space:nowrap}}
+
 /* ── Sanctioned Live: real provider routing and metered bouts ───── */
 .singularity-lobby .landing-live{grid-column:1/-1;border-color:#ff8a32;color:#ffd0a8;background:rgba(37,12,3,.88)}
 .singularity-lobby .landing-live:hover{border-color:#ff5e00;color:white;box-shadow:0 0 18px rgba(255,94,0,.3)}
@@ -658,3 +728,22 @@ body { min-width: 320px; }
   .singularity-lobby .landing-live{grid-column:1}.singularity-lobby .landing-live small{display:none}.live-settings-screen{padding:.4rem;grid-template-rows:auto auto minmax(0,1fr) auto}.live-settings-header p{display:none}.live-readiness{min-width:8.5rem}.live-readiness strong{font-size:1.8rem}.live-settings-body{grid-template-columns:1fr;grid-template-rows:minmax(0,.9fr) minmax(0,1.1fr);gap:.4rem;padding:.4rem 0}.provider-card-grid{grid-template-columns:1fr 1fr}.provider-key-card p,.provider-key-card label{display:none}.provider-key-card input{height:30px}.provider-key-actions button{font-size:0}.provider-key-actions button svg{width:14px}.fighter-route{grid-template-columns:34px minmax(5.5rem,.75fr) minmax(6.5rem,.7fr) minmax(7rem,1fr);gap:.3rem}.route-avatar{width:34px;height:34px}.route-identity b{font-size:.52rem}.fighter-route label{font-size:.38rem}.fighter-route select,.fighter-route input{height:26px;font-size:.46rem}.live-settings-footer{grid-template-columns:1fr auto;padding:.4rem}.billing-consent{grid-column:1/-1}.live-budget small{display:none}.live-footer-actions{grid-column:2;grid-row:1}.live-footer-actions .secondary-action{display:none}.live-footer-actions button{font-size:.52rem}.live-security-rail span{font-size:.45rem}
   .live-faceoff-notice span{font-size:.44rem}.live-fight-screen{padding:.4rem}.live-fight-header{grid-template-columns:1fr auto 1fr;min-height:54px;padding:.3rem}.live-fight-header>strong{font-size:.72rem}.live-fight-header svg{width:18px}.live-fight-header span{font-size:.38rem}.live-fight-header b{font-size:.58rem}.live-fight-rail span{display:none}.live-corners{grid-template-columns:1fr 1fr;gap:.3rem;padding:.3rem 0}.live-corner>header{min-height:48px;padding:.3rem;gap:.3rem}.live-corner-avatar{width:36px;height:36px}.live-corner header h2{font-size:.58rem}.live-corner header span,.live-corner header small{font-size:.36rem}.live-output-scroll{padding:.35rem}.live-output-scroll article{padding:.4rem}.live-output-scroll article p{font-size:.68rem;line-height:1.4}.live-output-scroll article small{font-size:.36rem}.live-corner>footer{grid-template-columns:1fr 1fr}.live-corner>footer div{padding:.3rem}.live-corner>footer span{font-size:.35rem}.live-corner>footer b{font-size:.5rem}.live-fight-actions>span{display:none}.live-fight-actions button{font-size:.45rem;padding:.35rem}
 }
+
+/* Final Live overrides sit after the provider layout rules. */
+.provider-vault header p,.fighter-routing header p,.provider-key-card p,.provider-key-card label,.provider-key-card input,.provider-key-actions button,.route-identity span,.fighter-route label,.fighter-route select,.fighter-route input,.route-meter,.live-budget small,.billing-consent,.live-security-rail,
+.live-fight-header span,.live-corner header span,.live-corner header small,.live-output-scroll article>span,.live-output-scroll article small,.live-corner>footer span,.live-fight-actions>span,.live-fight-actions button,.live-faceoff-notice{font-size:.75rem}
+.route-identity b{font-size:.78rem}.provider-key-card>div>b{font-size:.7rem}.live-corner>footer b{font-size:.78rem}
+@media (max-width:700px){
+  .route-list{overflow:auto}.fighter-route{grid-template-columns:42px minmax(6.5rem,.72fr) minmax(7rem,.85fr);grid-template-rows:auto auto;min-width:0;min-height:86px}.fighter-route .route-avatar{grid-column:1;grid-row:1/3;width:42px;height:42px}.fighter-route .route-identity{grid-column:2;grid-row:1}.fighter-route label:first-of-type{grid-column:3;grid-row:1}.fighter-route label:last-of-type{grid-column:2/4;grid-row:2}.provider-key-actions button{font-size:.69rem}.provider-key-actions button svg{width:14px}.live-output-scroll article p{font-size:.875rem}
+  .provider-vault header p,.fighter-routing header p,.provider-key-card p,.provider-key-card label,.provider-key-card input,.provider-key-actions button,.route-identity span,.fighter-route label,.fighter-route select,.fighter-route input,.route-meter,.live-budget small,.billing-consent,.live-security-rail,
+  .live-fight-header span,.live-corner header span,.live-corner header small,.live-output-scroll article>span,.live-output-scroll article small,.live-corner>footer span,.live-fight-actions>span,.live-fight-actions button,.live-faceoff-notice{font-size:.69rem}
+}
+
+/* Raise low-contrast operational copy without competing with headlines. */
+.command-context span,.command-status,.drawer-heading span,.drawer-settings label,.setting-toggle small,
+.roster-tabs button,.preview-corner,.preview-provider,.preview-stats dt,.matrix-crosshair,.matrix-readout b,
+.stage-modifiers span,.stage-title-card>strong,.faceoff-fighter dt,.faceoff-core>span,.faceoff-core>small,.faceoff-intel span,.prediction-box>span,
+.provider-vault header p,.fighter-routing header p,.provider-key-card p,.provider-key-card label,.fighter-route label,.live-corner header span,.live-corner header small,.live-corner>footer span{color:#98a4a9}
+.roster-tabs button[aria-selected="true"],.record-tabs button[aria-selected="true"],.verdict-tabs button[aria-selected="true"]{color:#6ff7ff}
+.live-settings-header>div>span,.live-settings-header p,.live-readiness span,.live-readiness small,.provider-key-card>div>span,.live-budget label,.live-security-rail span{font-size:.75rem}
+@media (max-width:700px){.live-security-rail span{font-size:.69rem}}

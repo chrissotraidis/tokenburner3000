@@ -14,6 +14,8 @@ settings, view identity, and a stable viewport frame for every TokenBurner scree
 - Dense setup/history screens scroll within a labeled content region, not behind the command bar. (decided)
 - Automatic notifications never render as fixed popups or play automatic sounds. (user-stated)
 - Type used for primary content is at least 14px on compact screens and 15px on desktop. (user-stated)
+- Dense operational labels and values remain at least 11px on compact screens
+  and 12px on desktop. (user-stated)
 
 ## Acceptance Criteria
 
@@ -23,7 +25,9 @@ settings, view identity, and a stable viewport frame for every TokenBurner scree
 - [x] Background audio can be muted from the bar and adjusted in the menu.
 - [x] Opening and closing the menu preserves the current screen state.
 - [x] All primary views fit the viewport frame; any required overflow is inside a named panel.
+- [x] Supporting copy, tabs, values, and controls meet the shared readability floor.
 
 ## Status
 
-🟢 Implemented — browser-verified at 1048×784 and 390×844 on July 11, 2026.
+🟢 Implemented — fixed shell behavior and the shared readability floor are
+browser-verified at desktop and 390×844.

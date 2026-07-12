@@ -33,6 +33,15 @@ The original specification is at `docs/reference/tokenburner-3000-concept-v2.md`
 The existing neon CRT prototype remains a visual ancestor. The active direction
 is the progressive vector-arcade system in `docs/visual-system/`.
 
+## Field Guides
+
+- `docs/getting-started/getting-started-overview.md` — complete player journey,
+  cabinet controls, clearance, programs, and records
+- `docs/sanctioned-live/sanctioned-live-operator-guide.md` — provider setup,
+  accounting semantics, secret handling, and failure recovery
+- `docs/release/release-overview.md` — automated, browser, Live safety, and
+  publication gates for maintainers
+
 ## Current Status
 🟢 Arcade upgrade and Sanctioned Live implemented — the sourced July 2026 roster, shared event
 engine, arena mechanics, Commission, commentary, interventions, vector cabinet,

@@ -1,9 +1,11 @@
 import { useMemo, useState } from 'react';
-import { ChevronRight, Crosshair, LockKeyhole, Swords } from 'lucide-react';
+import { ChevronRight, Crosshair, LockKeyhole, ShieldCheck, Swords } from 'lucide-react';
 import type { Fighter, RosterTier } from '../types';
 import { displayPrice, FIGHTERS, ROSTER_TIER_LABELS } from '../data/fighters';
 import FighterPortrait from './FighterPortrait';
 import { isLiveReady, type FightMode, type FighterLiveRoute, type LiveStatus } from '../lib/live';
+import { getFightRecords } from '../lib/storage';
+import { fighterHasClearance, getRestrictedUnlocks, withExhibitionClearance, type RestrictedUnlockProgress } from '../lib/unlocks';
 
 interface FighterSelectProps {
   mode?: FightMode;
@@ -22,17 +24,18 @@ const tiers: RosterTier[] = ['main', 'guest', 'restricted', 'legend'];
 export default function FighterSelect({ mode = 'exhibition', liveRoutes = {}, liveStatus = null, fighter1, fighter2, onSelectFighter, onDeselectFighter, onConfirm, onBack }: FighterSelectProps) {
   const [tier, setTier] = useState<RosterTier>('main');
   const visible = useMemo(() => FIGHTERS.filter(fighter => fighter.rosterTier === tier), [tier]);
+  const unlocks = useMemo(() => getRestrictedUnlocks(getFightRecords()), []);
   const [highlightedId, setHighlightedId] = useState(visible[0]?.id ?? '');
   const highlighted = visible.find(fighter => fighter.id === highlightedId) ?? visible[0] ?? null;
 
   const choose = (fighter: Fighter) => {
-    onSelectFighter(fighter);
-    const next = visible.find(candidate => candidate.eligible && (mode !== 'live' || isLiveReady(candidate, liveRoutes, liveStatus)) && candidate.id !== fighter.id && candidate.id !== fighter1?.id);
+    onSelectFighter(withExhibitionClearance(fighter, unlocks));
+    const next = visible.find(candidate => fighterHasClearance(candidate, unlocks) && (mode !== 'live' || isLiveReady(withExhibitionClearance(candidate, unlocks), liveRoutes, liveStatus)) && candidate.id !== fighter.id && candidate.id !== fighter1?.id);
     if (next) setHighlightedId(next.id);
   };
 
-  const redPreview = fighter1 ?? highlighted;
-  const bluePreview = fighter2 ?? (fighter1 ? highlighted : null);
+  const redPreview = fighter1 ?? (highlighted ? withExhibitionClearance(highlighted, unlocks) : null);
+  const bluePreview = fighter2 ?? (fighter1 && highlighted ? withExhibitionClearance(highlighted, unlocks) : null);
 
   return (
     <div className="roster-screen arcade-roster screen-layout">
@@ -52,15 +55,22 @@ export default function FighterSelect({ mode = 'exhibition', liveRoutes = {}, li
       <div className="fighter-select-arena">
         <FighterPreview fighter={redPreview} side="red" locked={!!fighter1} onClear={fighter1 ? () => onDeselectFighter(1) : undefined} />
 
-        <section className="roster-matrix" aria-label={`${ROSTER_TIER_LABELS[tier]} fighters`}>
+        <section className={`roster-matrix ${tier === 'restricted' ? 'has-clearance' : ''}`} aria-label={`${ROSTER_TIER_LABELS[tier]} fighters`}>
           <div className="matrix-crosshair"><Crosshair aria-hidden="true" /> ROSTER MATRIX</div>
+          {tier === 'restricted' && (
+            <div className="clearance-console" aria-label="Restricted fighter clearance trials">
+              {visible.map(fighter => <ClearanceCard key={fighter.id} fighter={fighter} progress={unlocks[fighter.id]} />)}
+            </div>
+          )}
           <div className="roster-tile-grid">
             {visible.map((fighter, index) => {
               const isF1 = fighter1?.id === fighter.id;
               const isF2 = fighter2?.id === fighter.id;
               const selected = isF1 || isF2;
-              const liveReady = mode !== 'live' || isLiveReady(fighter, liveRoutes, liveStatus);
-              const disabled = !fighter.eligible || !liveReady || selected || (!!fighter1 && !!fighter2);
+              const hasClearance = fighterHasClearance(fighter, unlocks);
+              const runtimeFighter = withExhibitionClearance(fighter, unlocks);
+              const liveReady = mode !== 'live' || isLiveReady(runtimeFighter, liveRoutes, liveStatus);
+              const disabled = !hasClearance || !liveReady || selected || (!!fighter1 && !!fighter2);
               return (
                 <button
                   key={fighter.id}
@@ -70,14 +80,15 @@ export default function FighterSelect({ mode = 'exhibition', liveRoutes = {}, li
                   onMouseEnter={() => setHighlightedId(fighter.id)}
                   onFocus={() => setHighlightedId(fighter.id)}
                   onClick={() => choose(fighter)}
-                  className={`roster-tile ${highlighted?.id === fighter.id ? 'is-highlighted' : ''} ${selected ? 'is-selected' : ''} ${!fighter.eligible ? 'is-restricted' : ''} ${!liveReady ? 'is-unrouted' : ''}`}
-                  aria-label={`${fighter.name}, ${fighter.title}${!liveReady ? ', needs live route' : ''}${isF1 ? ', red corner' : isF2 ? ', blue corner' : ''}`}
+                  className={`roster-tile ${highlighted?.id === fighter.id ? 'is-highlighted' : ''} ${selected ? 'is-selected' : ''} ${!hasClearance ? 'is-restricted' : ''} ${hasClearance && fighter.rosterTier === 'restricted' ? 'is-cleared' : ''} ${!liveReady ? 'is-unrouted' : ''}`}
+                  aria-label={`${fighter.name}, ${fighter.title}${!hasClearance ? `, locked, ${unlocks[fighter.id]?.current ?? 0} of ${unlocks[fighter.id]?.required ?? 0} clearance objectives` : fighter.rosterTier === 'restricted' ? ', Exhibition clearance earned' : ''}${!liveReady ? ', needs live route' : ''}${isF1 ? ', red corner' : isF2 ? ', blue corner' : ''}`}
                 >
                   <span className="tile-number">{String(index + 1).padStart(2, '0')}</span>
                   <FighterPortrait fighterId={fighter.id} fighterName={fighter.name} className="tile-portrait" />
                   <span className="tile-nameplate"><strong>{fighter.name}</strong><small>{fighter.provider}</small></span>
-                  {!fighter.eligible && <LockKeyhole className="tile-lock" aria-hidden="true" />}
-                  {mode === 'live' && fighter.eligible && <span className={`tile-live-state ${liveReady ? 'ready' : ''}`}>{liveReady ? 'LIVE' : 'ROUTE'}</span>}
+                  {!hasClearance && <LockKeyhole className="tile-lock" aria-hidden="true" />}
+                  {hasClearance && fighter.rosterTier === 'restricted' && <span className="tile-clearance">CLEARED</span>}
+                  {mode === 'live' && hasClearance && <span className={`tile-live-state ${liveReady ? 'ready' : ''}`}>{liveReady ? 'LIVE' : 'ROUTE'}</span>}
                   {isF1 && <i>RED</i>}{isF2 && <i>BLUE</i>}
                 </button>
               );
@@ -85,7 +96,13 @@ export default function FighterSelect({ mode = 'exhibition', liveRoutes = {}, li
           </div>
           <div className="matrix-readout">
             <span>{highlighted?.signature.name ?? 'NO SIGNAL'}</span>
-            <b>{mode === 'live' && highlighted && !isLiveReady(highlighted, liveRoutes, liveStatus) ? 'Configure this fighter route in Sanctioned Live settings.' : highlighted?.signature.description ?? 'Select an eligible fighter.'}</b>
+            <b>{highlighted && !fighterHasClearance(highlighted, unlocks)
+              ? `${unlocks[highlighted.id]?.description} ${unlocks[highlighted.id]?.current ?? 0}/${unlocks[highlighted.id]?.required ?? 0} complete.`
+              : highlighted?.rosterTier === 'restricted' && unlocks[highlighted.id]?.unlocked
+                ? 'Local Commission clearance earned. Exhibition entry approved.'
+                : mode === 'live' && highlighted && !isLiveReady(withExhibitionClearance(highlighted, unlocks), liveRoutes, liveStatus)
+                ? 'Configure this fighter route in Sanctioned Live settings.'
+                : highlighted?.signature.description ?? 'Select an eligible fighter.'}</b>
           </div>
         </section>
 
@@ -110,7 +127,7 @@ function FighterPreview({ fighter, side, locked, onClear }: { fighter: Fighter |
     <aside className={`fighter-preview ${side} ${locked ? 'is-locked' : ''}`}>
       <div className="preview-corner"><span>{side.toUpperCase()} CORNER</span>{locked && <b>LOCKED</b>}</div>
       <div className="preview-character"><FighterPortrait fighterId={fighter.id} fighterName={fighter.name} className="preview-portrait" eager /></div>
-      <div className="preview-provider">{fighter.provider} · {fighter.availability}</div>
+      <div className="preview-provider">{fighter.provider} · {fighter.rosterTier === 'restricted' && fighter.eligible ? 'EXHIBITION CLEARED' : fighter.availability}</div>
       <h2>{fighter.name}</h2>
       <em>“{fighter.title}”</em>
       <dl className="preview-stats">
@@ -118,9 +135,21 @@ function FighterPreview({ fighter, side, locked, onClear }: { fighter: Fighter |
         <Stat label="SPEED" value={speed} display={`${fighter.tokensPerSecond} t/s`} />
         <Stat label="BURN" value={cost} display={displayPrice(fighter)} />
       </dl>
-      <div className="preview-signature"><span>SIGNATURE MOVE</span><strong>{fighter.signature.name}</strong><small>{fighter.signature.description}</small></div>
+      <div className="preview-signature"><span>SIGNATURE MOVE</span><strong>{fighter.signature.name}</strong><small>{fighter.rosterTier === 'restricted' && fighter.eligible ? 'Local Commission clearance earned. Exhibition entry approved.' : fighter.signature.description}</small></div>
       {onClear && <button className="preview-clear" onClick={onClear}>Release corner</button>}
     </aside>
+  );
+}
+
+function ClearanceCard({ fighter, progress }: { fighter: Fighter; progress?: RestrictedUnlockProgress }) {
+  if (!progress) return null;
+  return (
+    <div className={progress.unlocked ? 'is-cleared' : ''}>
+      {progress.unlocked ? <ShieldCheck aria-hidden="true" /> : <LockKeyhole aria-hidden="true" />}
+      <span><b>{fighter.name}</b><small>{progress.title}</small></span>
+      <strong>{progress.unlocked ? 'CLEARED' : `${progress.current}/${progress.required}`}</strong>
+      <i aria-hidden="true"><em style={{ width: `${progress.current / progress.required * 100}%` }} /></i>
+    </div>
   );
 }
 

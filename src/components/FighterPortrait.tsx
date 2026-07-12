@@ -1,3 +1,5 @@
+import { fighterPortraitSrc } from '../lib/portraits';
+
 interface FighterPortraitProps {
   fighterId: string;
   fighterName: string;
@@ -9,11 +11,16 @@ export default function FighterPortrait({ fighterId, fighterName, className = ''
   return (
     <img
       className={className}
-      src={`/art/fighters/${fighterId}.jpg`}
+      src={fighterPortraitSrc(fighterId)}
       alt={`${fighterName} arcade fighter portrait`}
       loading={eager ? 'eager' : 'lazy'}
       decoding="async"
       draggable={false}
+      onError={event => {
+        if (!event.currentTarget.src.endsWith('/art/fighters/gpt-5-5.jpg')) {
+          event.currentTarget.src = '/art/fighters/gpt-5-5.jpg';
+        }
+      }}
     />
   );
 }

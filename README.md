@@ -7,15 +7,22 @@
 [![React 19](https://img.shields.io/badge/React-19-00d8ff?style=for-the-badge&logo=react&logoColor=white)](https://react.dev/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-Strict-3178c6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![Vite 8](https://img.shields.io/badge/Vite-8-bd34fe?style=for-the-badge&logo=vite&logoColor=white)](https://vite.dev/)
-[![Tests 18](https://img.shields.io/badge/Tests-18%20passing-39ff14?style=for-the-badge&logo=vitest&logoColor=black)](#release-gates)
+[![Tests 23](https://img.shields.io/badge/Tests-23%20passing-39ff14?style=for-the-badge&logo=vitest&logoColor=black)](#release-gates)
+[![Live providers 8](https://img.shields.io/badge/Live%20providers-8-ff5e00?style=for-the-badge)](#spend-actual-money-sanctioned-live)
 
 `19 FIGHTERS` · `5 ARENAS` · `60 SECONDS` · `1 OFFICIAL REGULATORY BODY`
 
-[Run the cabinet](#run-the-cabinet) · [See the damage](#see-the-damage) · [Meet the machines](#meet-the-machines) · [Go live](#spend-actual-money-sanctioned-live) · [Architecture](#under-the-cabinet) · [Status](#project-status)
+[Run the cabinet](#run-the-cabinet) · [Take the tour](#the-30-second-cabinet-tour) · [Meet the machines](#meet-the-machines) · [Go live](#spend-actual-money-sanctioned-live) · [Read the field manual](#field-manual) · [Status](#project-status)
 
 </div>
 
 ![TokenBurner 3000 arcade lobby](docs/audits/2026-07-12-datacenter-spectacle/14-lobby-final.png)
+
+<p align="center">
+  <strong>FREE EXHIBITION CABINET</strong> &nbsp;•&nbsp;
+  <strong>REAL-API PREMIUM CIRCUIT</strong> &nbsp;•&nbsp;
+  <strong>LOCAL PROGRESS + REPLAYS</strong>
+</p>
 
 TokenBurner 3000 is a client-side arcade combat game where current AI-model
 storylines become fighting mechanics. Pick two machines, sanction an arena, hype
@@ -66,6 +73,26 @@ npm start      # serve dist plus Live proxy at http://127.0.0.1:4173
     <td align="center"><b>REAL KEYS · REAL TOKENS · REAL CONSEQUENCES</b></td>
   </tr>
 </table>
+
+## The 30-second cabinet tour
+
+<table>
+  <tr>
+    <td width="25%" align="center"><a href="docs/audits/2026-07-12-fighter-identity/03-roster.png"><img src="docs/audits/2026-07-12-fighter-identity/03-roster.png" alt="Character-select screen" width="100%"></a><br><b>1. Draft two machines</b><br><sub>Full portraits, dossiers, tiers, and matchup stats.</sub></td>
+    <td width="25%" align="center"><a href="docs/audits/2026-07-12-unlocks-readability/08-arena-after.png"><img src="docs/audits/2026-07-12-unlocks-readability/08-arena-after.png" alt="Animated arena-select screen" width="100%"></a><br><b>2. Choose the killbox</b><br><sub>Five stages with distinct laws and scoring pressure.</sub></td>
+    <td width="25%" align="center"><a href="docs/audits/2026-07-12-unlocks-readability/09-faceoff-after.png"><img src="docs/audits/2026-07-12-unlocks-readability/09-faceoff-after.png" alt="Glowing face-off screen" width="100%"></a><br><b>3. Work the crowd</b><br><sub>Predict the winner and charge the face-off reactor.</sub></td>
+    <td width="25%" align="center"><a href="docs/audits/2026-07-12-fighter-identity/05-fight.png"><img src="docs/audits/2026-07-12-fighter-identity/05-fight.png" alt="TokenBurner live fight" width="100%"></a><br><b>4. Watch compute burn</b><br><sub>Contained transcripts, interventions, momentum, and receipts.</sub></td>
+  </tr>
+</table>
+
+<details>
+<summary><strong>Continue the broadcast: verdict, records, and mobile cabinet</strong></summary>
+
+| Official decision | Persistent fight records | Full cabinet at 390px |
+|---|---|---|
+| [![Official verdict](docs/audits/2026-07-12-fighter-identity/06-verdict.png)](docs/audits/2026-07-12-fighter-identity/06-verdict.png) | [![Hall of Shame](docs/audits/2026-07-12-unlocks-readability/07-hall-after.png)](docs/audits/2026-07-12-unlocks-readability/07-hall-after.png) | [![Mobile face-off](docs/audits/2026-07-12-unlocks-readability/10-mobile-faceoff-after.png)](docs/audits/2026-07-12-unlocks-readability/10-mobile-faceoff-after.png) |
+
+</details>
 
 ## The fight card
 
@@ -143,14 +170,32 @@ history continue to use typed fighter records.
 
 ### Restricted and Legends
 
-- Claude Mythos 5 — The Secret Boss
-- Gemini 3.5 Pro — The No-Show
+- Claude Mythos 5 — The Secret Boss; clears after wins in three distinct arenas
+- Gemini 3.5 Pro — The No-Show; clears after three completed Exhibition bouts
 - Llama 4 Maverick — retired legend
 
 Roster claims, verification state, and source notes live in
 [`docs/reference/2026-07-11-roster-snapshot.md`](docs/reference/2026-07-11-roster-snapshot.md).
 
 </details>
+
+## Break into the restricted vault
+
+Restricted fighters are not paid DLC and they are not unlocked with a mystery
+currency. The Commission watches ordinary Exhibition history and grants local
+cabinet clearance when a player proves sufficiently irresponsible.
+
+| Restricted dossier | Clearance trial |
+|---|---|
+| **Gemini 3.5 Pro — The No-Show** | Complete three Exhibition bouts. Wins are optional; attendance is the joke. |
+| **Claude Mythos 5 — The Secret Boss** | Win Exhibition bouts in three distinct arenas. |
+
+[![Restricted fighter clearance screen](docs/audits/2026-07-12-unlocks-readability/06-restricted-after.png)](docs/audits/2026-07-12-unlocks-readability/06-restricted-after.png)
+
+Progress is derived from existing local fight records, updates automatically,
+and never implies that a fictional or unavailable model has become a real API.
+Cleared fighters can enter Sanctioned Live only when the player supplies a valid
+provider route and model ID.
 
 ## Five arenas, five laws
 
@@ -306,6 +351,16 @@ server/
 The docs are feature-organized and are the product source of truth. Start with
 [`docs/overview.md`](docs/overview.md), [`docs/spec.md`](docs/spec.md), and
 [`docs/status.md`](docs/status.md).
+
+## Field manual
+
+| If you want to… | Open this |
+|---|---|
+| Play the complete cabinet loop and understand every control | [Player field guide](docs/getting-started/getting-started-overview.md) |
+| Connect providers, route fighters, and understand real token accounting | [Sanctioned Live operator guide](docs/sanctioned-live/sanctioned-live-operator-guide.md) |
+| Understand the product contract and architecture | [Product overview](docs/overview.md) and [technical specification](docs/spec.md) |
+| Ship a release without leaking keys or stale screenshots | [Maintainer release runbook](docs/release/release-overview.md) |
+| Check implementation and known follow-ups | [Current status](docs/status.md) and [open unknowns](docs/unknowns.md) |
 
 ## Project status
 

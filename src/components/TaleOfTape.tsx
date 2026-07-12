@@ -33,7 +33,7 @@ export default function TaleOfTape({ mode = 'exhibition', liveBudget = .25, figh
   ];
 
   return (
-    <div className={`tale-screen faceoff-screen ${hype >= 100 ? 'is-max-hype' : ''}`}>
+    <div className={`tale-screen faceoff-screen hype-${hype} ${hype >= 100 ? 'is-max-hype' : ''}`} data-hype={hype}>
       <img className="faceoff-backdrop" src={arenaArt(arena.id)} alt="" />
       <SpectacleCanvas variant="faceoff" intensity={.9 + hype / 80} pulse={hype} reduced={!effectsEnabled} />
       <div className="faceoff-shade" />
