@@ -210,62 +210,47 @@ provider route and model ID.
 Arena choice changes phrase pools, scoring modifiers, event interpretation, and
 the illustrated stage behind the fight. It is not a cosmetic dropdown.
 
-## Why it feels alive
+## Fight-night systems
 
-- **Individual character art** across roster, face-off, live HUD, verdict, and records.
-- **Timed broadcast phases:** Opening Volley, Overclock, Meltdown, Final Ten.
-- **Signature moves** rooted in each fighter’s current lore.
-- **The Commission:** export controls, capability reviews, holds, and region locks.
-- **Audience commands:** demand a rebuttal, force an analogy, fact-check, double down, or throw the regulation tomato.
-- **Color commentary** triggered by actual fight events, lead changes, cost gaps, and repetition.
-- **Readable chaos:** no automatic modal popups; official events use a reserved notification rail.
-- **Progressive spectacle:** generated stages plus lazy-loaded React Three Fiber particles.
-- **Accessibility:** Reduced Effects removes WebGL and aggressive motion without changing gameplay.
+`CHARACTER ART` · `SIGNATURE MOVES` · `COMMISSION RULINGS` · `CROWD ACTIONS`
+
+- Four broadcast phases escalate from **Opening Volley** to **Final Ten**.
+- Fighters throw lore-specific signatures while the Commission invents new paperwork.
+- The crowd gets two interventions, including the regulation tomato.
+- Commentary, judging, replays, and receipts all follow the same fight tape.
+- Reduced Effects drops the WebGL spectacle without changing the outcome.
 
 ## Spend actual money: Sanctioned Live
 
 Open the menu or press **SANCTIONED LIVE** in the lobby to connect OpenRouter,
 OpenAI, Anthropic, Google Gemini, xAI, DeepSeek, Z.ai, or Moonshot.
 
-| Enter the premium circuit | Open the ephemeral provider vault |
+| Enter the premium circuit | Open the provider vault |
 |---|---|
 | [![Sanctioned Live entry](docs/audits/2026-07-12-sanctioned-live/01-live-entry.png)](docs/audits/2026-07-12-sanctioned-live/01-live-entry.png) | [![Provider key vault](docs/audits/2026-07-12-sanctioned-live/02-provider-vault.png)](docs/audits/2026-07-12-sanctioned-live/02-provider-vault.png) |
-| **Route every fighter to a real endpoint** | **Configure safely from mobile** |
-| [![Live fighter routing](docs/audits/2026-07-12-sanctioned-live/03-live-roster.png)](docs/audits/2026-07-12-sanctioned-live/03-live-roster.png) | [![Mobile live settings](docs/audits/2026-07-12-sanctioned-live/04-mobile-live-settings.png)](docs/audits/2026-07-12-sanctioned-live/04-mobile-live-settings.png) |
 
-- Keys are held in an expiring server-memory vault behind an HttpOnly cookie.
-- The browser receives only configured/tested status—never the secret.
-- Every fighter has an editable provider/model route.
-- OpenRouter reports native token counts and billed cost.
-- Direct providers report actual tokens; cost is clearly labeled as an estimate.
-- Both corners are called concurrently for three real exchanges.
-- Rate limits, timeouts, missing usage, and partial rounds stay recoverable.
+### Put real models in the ring
 
-The spend guard is a safety rail, not a provider billing guarantee. Use restricted
-keys with low provider-side limits. Full contracts and current model IDs are in
-[`docs/sanctioned-live/sanctioned-live-overview.md`](docs/sanctioned-live/sanctioned-live-overview.md).
+[![Live fighter routing](docs/audits/2026-07-12-sanctioned-live/03-live-roster.png)](docs/audits/2026-07-12-sanctioned-live/03-live-roster.png)
+
+- Eight provider routes, editable model IDs, three real exchanges.
+- Provider-reported tokens drive the counter and receipt.
+- Keys stay in an expiring server-memory vault, never browser storage.
+- A spend guard stops later exchanges; provider-side limits remain the real referee.
 
 <details>
-<summary><strong>How does the key vault avoid leaking credentials?</strong></summary>
+<summary><strong>See the compact Live controls</strong></summary>
 
-Provider secrets are submitted only to the local server, kept in an expiring
-in-memory vault, and associated with an HttpOnly, SameSite=Strict session cookie.
-The client can ask which providers are configured and when they were tested, but
-the API never echoes a key. Nothing is written to `localStorage`, the bundle, or
-the fight record.
+<p align="center">
+  <a href="docs/audits/2026-07-12-sanctioned-live/04-mobile-live-settings.png">
+    <img src="docs/audits/2026-07-12-sanctioned-live/04-mobile-live-settings.png" width="260" alt="Compact Sanctioned Live settings">
+  </a>
+</p>
 
 </details>
 
-<details>
-<summary><strong>What counts as “actual” usage?</strong></summary>
-
-The fight receipt records the usage object returned by the provider for each
-exchange. OpenRouter can report billed cost directly. Direct-provider routes use
-their real input/output token counts and mark cost as an estimate when the
-provider response does not include billing. Unknown numbers remain unknown; the
-cabinet does not manufacture precision.
-
-</details>
+Setup details and accounting rules live in the
+[Sanctioned Live operator guide](docs/sanctioned-live/sanctioned-live-operator-guide.md).
 
 ## The verdict is not a loading screen
 
